@@ -1,0 +1,48 @@
+
+.chat{
+	display: flex;
+	flex-direction: column;
+	height: 52vh;
+	width: 370px;
+	padding-top: 0px;
+	border: 1px solid rgba(50, 0, 0, 0.5);
+	background-color: rgba(10, 0, 0, 0.95);
+	position: fixed; right: 300px; bottom: 0px;
+	z-index: 1;
+	border: 1px solid rgba(40, 40, 40, 1);
+}
+.chatHead{
+	height: 70px;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid var(--gold-five);;
+	font-size: 16px;
+	color: rgba(250, 250, 250, 0.9);
+	padding-left: 10px;
+	font-family: Spiegel-Regular;
+}
+.chat-messages{
+	color: white!important;
+	height: 94%;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	overflow: scroll;
+	text-align: right;
+}
+
+.input-chat{
+	background-color: rgba(50, 0, 0, 0.1);
+	border: 1px solid gray;
+	width: 100%;
+	color: #fafafa;
+	height: 39px;
+	border-image: linear-gradient(to bottom, gray, rgba(250, 250, 250, 0.4), rgba(60, 60, 60, 1)) 1;
+	font-size: 16px;
+	font-weight: 530;
+	padding-left: 10px;
+}
+.input-chat:focus{
+		border-image: linear-gradient(to bottom, var(--gold-two), var(--gold-four), var(--gold-five)) 1;
+}

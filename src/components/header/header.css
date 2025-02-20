@@ -1,0 +1,148 @@
+@keyframes reduction {
+  from {
+    scale: 0.8;
+  }
+  to {
+    scale: 1;
+  }
+}
+@keyframes brightnes {
+  from {
+    filter: brightness(1.5);
+  }
+  to {
+    filter: brightness(1);
+  }
+}
+.index-header {
+	width: 100%;
+	height: 11.5vh;
+	position: fixed;
+	padding-left: 50px;
+	align-items: center;
+	border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+  border-top: 2px solid rgb(120, 90, 40);
+	background-color: rgba(0, 0, 0, 0);
+	display: flex;
+	justify-content: space-between;
+	position: fixed; top: 0px;
+	padding-right: 300px;
+  user-select: none;
+  z-index: 5;
+}
+
+.header-sections{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
+	height: 100%;
+	width: 90%;
+  margin-right: 40px;
+}
+
+.header-sections .item{
+  width: 80px;
+	font-size: 1.5em;
+	color: var(--color-primary);
+}
+.header-sections .item:hover{
+    background: linear-gradient(transparent, var(--gold-seven));
+    color: #F0E6D2;
+}
+.header-sections .item:active{
+    animation-name: brightnes;
+    animation-duration: 0.5s;
+}
+.header-sections .item:active svg{
+    animation-name: reduction;
+    animation-duration: 0.5s;
+}
+.header-tooltip{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(25, 10, 10);
+  padding-right: 10px;
+  padding-left: 10px;
+  height: 40px;
+  border: 2px solid white;
+  border-image: linear-gradient(to bottom, var(--gold-five), var(--gold-six)) 1;
+  color: darkgray;
+  font-size: 14px;
+  font-family: Spiegel-Regular;
+  white-space: nowrap;
+  z-index: 1;
+}
+.icon-separator {
+  width: 2px;
+  height: 75%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #CDBE91 , rgba(255, 255, 255, 0));/*background: linear-gradient(to bottom, rgba(255, 165, 0, 0), rgba(255, 165, 0, 1), rgba(255, 165, 0, 0));*/
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  /*animation: shimmer 1s infinite alternate;*/
+}
+
+.account-coins{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 150px;
+    height: 65px;
+    margin-left: 30px;
+    font-family: "Bold";
+    font-size: 17.5px;
+    color: var(--gold-one);
+}
+
+.riot-points{
+    width: 140px;
+    height: 50%;
+    border: 1px solid rgba(250, 250, 250, 0.3);
+    border-radius: 20px;
+    background-color: black;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.blue-essences{
+    height: 50%;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.RP{
+    margin-left: 6px;
+}
+
+.BE{
+    margin-left: 10px;
+}
+
+@keyframes shimmer {
+  from {
+    filter: blur(0px);
+  }
+  to {
+    filter: blur(0.5px);
+  }
+}
+
+@media (max-width: 767px) {
+  .index-header{
+  	padding-left: 3vw;
+    padding-right: 0;
+  }
+  .header-sections{
+    margin-right: 5px;
+  }
+  .header-sections .item{
+  	width: 12vw;
+  }
+  .account-coins{
+    display: none;
+  }
+}

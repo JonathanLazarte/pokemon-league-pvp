@@ -1,0 +1,202 @@
+* {
+  box-sizing: border-box;
+}
+:root {
+  /*font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;*/
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+  background-color: #12161f;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  /*-webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;*/
+  height: 100%;
+  width: 100%;
+  user-select: none;
+}
+#root{
+  height: 100%;
+  width: 100%;
+}
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+::-webkit-scrollbar{
+  overflow: hidden;
+  display: none;
+}
+
+
+:root {
+  --color-primary: #CDBE91;
+  --color-secundary: #F0E6D2;
+  --gold-one: #F0E6D2;
+  --gold-two: #C8AA6E;
+  --gold-three: #C8AA6E;
+  --gold-four: #C89B3C;
+  --gold-five: #785A28;
+  --gold-six: #463714;
+  --gold-seven: #32281E;
+}
+
+
+h3, h2, h1, h4, h5, h6 {
+  margin: 0;
+}
+
+span {
+  font-size: 15px;
+  font-family: Spiegel-Regular;
+  color: #A09B8C;
+}
+
+@font-face {
+  font-family: Bold;
+  src: url('/fonts/BeaufortforLOL-Bold.ttf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-size: 40pt;
+  letter-spacing: 50px; /* Aproximación al seguimiento */
+  text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Bolditalic;
+  src: url(/fonts/BeaufortforLOL-Bolditalic.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Heavy;
+  src: url(/fonts/BeaufortforLOL-Heavy.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Heavyitalic;
+  src: url(/fonts/BeaufortforLOL-Heavyitalic.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Italic;
+  src: url(/fonts/BeaufortforLOL-italic.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Light;
+  src: url(/fonts/BeaufortforLOL-Light.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Lightitalic;
+  src: url(/fonts/BeaufortforLOL-Lightitalic.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Medium;
+  src: url(/fonts/BeaufortforLOL-Medium.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Mediumitalic;
+  src: url(/fonts/BeaufortforLOL-Mediumitalic.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face {
+  font-family: Regular;
+  src: url(/fonts/BeaufortforLOL-Regular.ttf) /*format('woff')*/;
+  font-weight: normal;
+  font-style: normal;
+  /*font-size: 40pt;
+  /*letter-spacing: 50px; /* Aproximación al seguimiento */
+  /*text-indent: 42px; /* Aproximación al "al frente" */  
+}
+
+@font-face{
+    font-family: Spiegel-Boldtalic;
+    src: url(/fonts/Spiegel-Regularitalic.otf);
+}
+
+@font-face{
+    font-family: Spiegel-Regular-Soft;
+    src: url(/fonts/Spiegel_Regular_Soft.woff2);
+}
+
+@font-face{
+    font-family: Spiegel-Bold;
+    src: url(/fonts/Spiegel_Bold.woff2);
+}
+@font-face{
+    font-family: Spiegel-Regular;
+    src: url(/fonts/Spiegel_Regular.woff2);
+}
+
+@font-face{
+    font-family: Spiegel-Bold-Italic;
+    src: url(/fonts/Spiegel_Bold_Italic.woff2);
+}
+
+@font-face{
+    font-family: Spiegel-Regular-Italic;
+    src: url(/fonts/Spiegel_Regular_Italic.woff2);
+}
+/*@media (prefers-color-scheme: light) {
+  :root {
+    //color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+   //color: #747bff;
+  }
+  button {
+    //background-color: #f9f9f9;
+  }
+}*/
+
+

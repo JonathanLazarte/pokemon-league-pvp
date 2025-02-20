@@ -1,0 +1,101 @@
+.confirm-purchase-screen{
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.4);
+	height: 100vh;
+	width: 100vw;
+	z-index: 5;
+}
+.confirm-purchase-window{
+	height: 70%;
+	width: 40%;
+	border: 2px solid white;
+	background-color: lightgray;
+	z-index: 1;
+	border-image: linear-gradient(to bottom, var(--gold-six), var(--gold-six), var(--gold-five)) 1;
+}
+.confirm-purchase-window-content{
+	background: linear-gradient(to bottom, transparent, transparent, transparent, transparent, rgba(20, 0, 0, 1.0), rgba(20, 0, 0, 1.0), rgba(20, 0, 0, 1.0));
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.exit-button{
+	height: 55%;
+	width: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	padding: 10px;
+}
+.exit-button button{
+	background-color: rgba(30, 0, 0, 1.0);
+	color: white;
+	height: 30px;
+	width: 30px;
+	cursor: pointer;
+}
+.product-title{
+	display: flex;
+	flex-direction: column;
+	border-bottom: 1px solid var(--gold-six);
+	align-items: center;
+	width: 90%;
+	height: 90px;
+}
+.product-name{
+	font-size: 30px;
+}
+.product-buy-buttons{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 31%;
+}
+.buy-rp-button, .buy-be-button{
+	position: relative;
+	height: 45px;
+	width: 160px;
+	border: 2px solid white;
+	margin: 15px;
+	font-size: 18px;
+	border-image: linear-gradient(to bottom, var(--gold-two), var(--gold-two), var(--gold-five)) 1;
+	background: linear-gradient(to bottom, var(--gold-seven), var(--gold-seven) ,var(--gold-seven) ,var(--gold-seven));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: var(--gold-one);
+}
+.buy-rp-button:hover, .buy-be-button:hover{
+	filter: brightness(1.2);
+	//background: linear-gradient(to bottom, var(--gold-seven), var(--gold-seven) ,var(--gold-six) ,var(--gold-six));
+}
+.rp-icon, .be-icon{
+	margin-right: 5px;
+}
+.new-balance{
+	width: 100%;
+	position: absolute;
+	bottom: -35px;
+}
+
+
+@media (max-width: 767px) {
+	.confirm-purchase-window{
+		height: 70%;
+		width: 80%;
+		border: 2px solid white;
+		background-color: lightgray;
+		z-index: 1;
+		border-image: linear-gradient(to bottom, var(--gold-six), var(--gold-six), var(--gold-five)) 1;
+	}
+}

@@ -1,0 +1,100 @@
+.pvp-room{
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	padding-bottom: 20px;
+}
+.room-header{
+	position: absolute;
+	top: 0;
+	padding-top: 20px;
+	height: 100px;
+	width: 100%;
+	padding-left: 30px;
+	color: var(--gold-one);
+	display: flex;
+	align-items: flex-start;
+	background: linear-gradient(to bottom, black, transparent);
+	overflow: hidden;
+	white-space: nowrap;
+}
+.header-arrow{
+	display: flex;
+	font-size: 30px;
+	width: 80px;
+	border-right: 1px solid gray;
+	margin-right: 30px;
+	color: var(--gold-five);
+	cursor: pointer;
+}
+.header-arrow:hover{
+	color: var(--gold-two);
+}
+.room-header img{
+	width: 30px;
+	opacity: 0.8;
+	margin-right: 15px;
+}
+.room-users{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	height: 85%;
+	width: 700px;
+}
+
+.room-user{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	align-content: center;
+	text-align: center;
+	width: 250px;
+}
+.user-banner{
+	width: 250px;
+	height: 95%;
+}
+.user-banner-info-container{
+	position: absolute;
+	bottom: 440px;
+}
+.banner-user-icon{
+	position: relative;
+	width: 195px;
+	display: flex;
+	justify-content: center;
+}
+.banner-user-icon-img{
+	z-index: 0;
+	position: absolute;
+	height: 90px;
+	left: 52px;
+	bottom: 41px;
+	border-radius: 40px;
+}
+.banner-user-border{
+	height: 160px;
+	width: 170px;
+	z-index: 1;
+}
+
+
+
+@media (max-width: 767px) {
+	.room-header{
+	font-size: 12px;
+	padding-left: 10px;
+	}
+	.room-header h3{
+		margin-top: 1%;
+	}
+	.header-arrow{
+	margin-right: 20px;
+	width: 50px;
+	}
+}

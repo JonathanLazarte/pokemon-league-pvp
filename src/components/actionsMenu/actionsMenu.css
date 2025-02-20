@@ -1,0 +1,122 @@
+.comeback-button{
+	position: fixed;
+	right: 32%; bottom: 23%;
+	height: 30px; width: 70px;
+	background: rgba(0, 0, 0, 0);
+	border-radius: 10px;
+	cursor: pointer;
+	z-index: 2;
+}
+.actions-menu{
+	background-color: gray;
+	width: 100%;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border: 1px solid white;
+	margin: auto;
+	height: 50%;
+	display: flex;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	z-index: 0;
+}
+.actions-container{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	height: 100%;
+	width: 50%;
+	justify-content: flex-end;
+}
+.actions-container .action-button{
+	border: 3px solid white;
+	border-radius: 10px;
+	cursor: pointer;
+	margin: 5px;
+}
+.actions-container .action-button:hover{
+	border: 3px solid white;
+	background-color: gray;
+}
+.pokemon-container{
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	height: 90%;
+	width: 80%;
+	margin-left: 50px;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	grid-gap: 5px;
+}
+.pokemon-container .change-pokemon-button{
+	color: white;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  align-items: center;
+  background-color: transparent;
+  font-size: 1em;
+  border-radius: 4px;
+  height: 100%;
+  width: 95%;
+  cursor: pointer;
+  border: 3px solid white;
+  font-size: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.change-pokemon-button:hover{
+	background-color: gray;
+}
+.change-pokemon-button img{
+  height: 90%;
+}
+.items-container{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 40%;
+	overflow: scroll;
+}
+.item-button{
+	display: flex;
+	height: 50px;
+	background-color: rgba(0, 0, 0, 0);
+	border: 0px;
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+	width: 100%;
+	border-radius: 5px;
+	align-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+.item-button:hover{
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+@media (max-width: 767px){
+	.actions-menu{
+    font-size: 2em;
+    justify-content: center;
+  }
+  .pokemon-container{
+  	margin: 0;
+  	width: 100%;
+  }
+  .actions-menu .pokemon-container .change-pokemon-button{
+	  font-size: 0.8em!important;
+	}
+	.comeback-button{
+		right: 15px; bottom: 185px;
+	}
+	.items-container{
+		width: 100%;
+	}
+	.item-button{
+		font-size: 0.7em;
+	}
+}
