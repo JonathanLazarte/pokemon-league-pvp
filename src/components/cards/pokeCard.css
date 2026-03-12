@@ -20,7 +20,7 @@
     border-radius: 4px;
 }
 .pokemon-shop .pokemon-card .title{
-    font-size: 13px;
+    font-size: 12px;
     margin-top: 0px;
     margin: 0px;
 }
@@ -32,6 +32,7 @@
     width: 93%!important;
 } 
 .pokemon{
+    object-fit: contain;
     border: 1px solid rgba(40, 40, 40, 1.0);
     border-radius: 2px;
     transition: all 0.2s;
@@ -41,10 +42,10 @@
     height: 100%;
     padding: 0px;
     filter: brightness(0.9);
-    box-shadow: 0px 50px 100px -20px rgba(50, 50, 93, 0.25), 0px 30px 60px -30px rgba(0, 0, 0, 0.3), inset 0px -2px 6px 0px rgba(10, 37, 64, 0.35);
+    transition: all 0.2s;
+    //box-shadow: 0px 50px 100px -20px rgba(50, 50, 93, 0.25), 0px 30px 60px -30px rgba(0, 0, 0, 0.3), inset 0px -2px 6px 0px rgba(10, 37, 64, 0.35);
 }
 .pokemon:hover{
-    border: 1px solid lightgoldenrodyellow;
     border-image: linear-gradient(to bottom, #F0E6D2, #C8AA6E, var(--gold-four)) 1;
     opacity: 1;
 }
@@ -104,21 +105,34 @@ img[src=".undefinedshield.png"] {
     justify-content: space-around;
     width: 65%;
     font-family: 'Spiegel-Regular';
+}
+.essences-price, .rp-price{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 42%;
+}
+
+.price-number{
+    margin-left: 5px;
     color: var(--gold-two);
-}
-.essences-price{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    width: 42%;
-}
-.rp-price{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    width: 42%;
 }
 @media (max-width: 767px){
 
-
+    .pokemon-shop .pokemon-card .title{
+        font-size: 10px;
+    }
+    .price{
+        width: 80%;
+    }
+    .essences-price, .rp-price{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45%;
+    }
+    .price-number{
+        margin-left: 5px;
+        font-size: 13px;
+    }
 }

@@ -1,14 +1,14 @@
 import {useState, useEffect, memo} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {addItem} from '../../store/actions/pokemonActions.js'
 import { BsSearch } from "react-icons/bs"
 import { GiDoubled, GiDividedSquare } from "react-icons/gi";
 import { FaCheck } from "react-icons/fa6";
-import './itemsShop.css'
-import '../../components/confirmPurchaseWindow/confirmPurchaseWindow.css'
-import { updateCoins } from '../../redux/slices/userSlice.js'
+import './itemsShop.css';
+import ConfirmPurchaseWindow from '../../components/confirmPurchaseWindow/confirmPurchaseWindow.jsx'
+import { updateCoins } from '../../redux/slices/userSlice.js';
+import { selectUserItemsData, buyItem } from '../../redux/slices/userItemsSlice.js';
 
-export const ConfirmPurchaseWindow = () => {
+/*export const ConfirmPurchaseWindow = () => {
     const {VITE_API_URL : API_URL} = import.meta.env;
     const token = localStorage.getItem('token')
     const dispatch = useDispatch()
@@ -24,7 +24,7 @@ export const ConfirmPurchaseWindow = () => {
         })
         .then(response => response.json())
         .then(data => {
-            dispatch(addItem(data));
+            dispatch(addItem(data) );
             dispatch(updateCoins({coin, price}))
             setShowWindow(false);
         });
@@ -44,12 +44,12 @@ export const ConfirmPurchaseWindow = () => {
                             <span>¡Agrega este item a tu inventario!</span> 
                         </div>
                         <div className="product-buy-buttons">
-                            <div onClick={()=>{user.RP - 350 >= 0 ? addToPokedex("RP", 350) : null}} style={RPButtonStyle} className="buy-rp-button">
+                            <div onClick={()=>{user.RP - 350 >= 0 ? buyProduct(350, "RP") : null}} style={RPButtonStyle} className="buy-rp-button">
                                 <GiDividedSquare className="rp-icon" fontSize="25px" color="gold" />
                                 {productPrice.rp}
                                 {newBalance.rp >= 0 ? <span className="new-balance">nuevo saldo: {user.RP - 350}</span> : <span className="new-balance" style={{color: "red"}}>Saldo insuficiente</span>}
                             </div>
-                            <div onClick={()=>{user.BE - 2000 >= 0 ? addToPokedex("BE", 2000) : null}} style={BEButtonStyle} className="buy-be-button">
+                            <div onClick={()=>{user.BE - 2000 >= 0 ? buyProduct(2000, "BE") : null}} style={BEButtonStyle} className="buy-be-button">
                                 <GiDoubled className="be-icon" fontSize="25px" color="0ACBE6" />
                                 {productPrice.be}
                                 {newBalance.be >= 0 ? <span className="new-balance">nuevo saldo: {user.BE - 2000}</span> : <span className="new-balance" style={{color: "red"}}>Saldo insuficiente</span>}
@@ -67,14 +67,14 @@ export const ConfirmPurchaseWindow = () => {
         setProductInfo({...product, productImg, productID})
     }
     return ({PurchaseWindow, activeWindow})
-}
+}*/
 
 
 
 
 
 
-export default memo(function ItemsShop({userItems}){
+export default memo(function ItemsShop(){
 	const {VITE_API_URL : API_URL} = import.meta.env
 	const [items, setItems] = useState([])
 	const [renderData, setRenderData] = useState([])
@@ -87,7 +87,8 @@ export default memo(function ItemsShop({userItems}){
     const [pokemonFrom, setPokemonFrom] = useState("All")
     const [inCollection, setInCollection] = useState(false)
     const [sortedBy, setSortedBy] = useState()
-    const {PurchaseWindow, activeWindow} = ConfirmPurchaseWindow()
+    const {PurchaseWindow, activeWindow} = ConfirmPurchaseWindow("item")
+    const {loading, userItems, error} = useSelector(selectUserItemsData);
 
 	useEffect(()=>{
 		/*for(let i=0; i<100; i++){
@@ -146,14 +147,14 @@ export default memo(function ItemsShop({userItems}){
           
                     </section>
                     <section className="nav-section">
-                        <select className="select-filter" onChange={(event)=>{setSortedBy(event.currentTarget.value)}}>
+                        <div className="select-container"><select className="select-filter" onChange={(event)=>{setSortedBy(event.currentTarget.value)}}>
 
                             <option value="">Precio ⭣ </option>
                             <option value="price ascend">Precio ⭡ </option>
                             <option value="alphabetically descend">Alfabético ⭣ </option>
                             <option value="alphabetically ascend">Alfabético ⭡ </option>           
 
-                        </select>
+                        </select></div>
            
                        	<div className="checkbox"><div className="custom-checkbox" ></div>Pokeballs</div>
                        	<div className="checkbox"><div className="custom-checkbox" ></div>Pociones</div>
@@ -174,8 +175,8 @@ export default memo(function ItemsShop({userItems}){
 						        <div className="product-info">
 						            <h3>{item.name.toUpperCase()}</h3>
 							        <div className="price">
-								        <div className="essences-price"><GiDoubled  fontSize="1.2em" color="0ACBE6" />2000</div> 
-								        <div className="rp-price"><GiDividedSquare  fontSize="1.2em" color="gold" /> 350</div>
+								        <div className="essences-price"><GiDoubled  fontSize="1.2em" color="0ACBE6" /><span className="price-number">2000</span></div> 
+								        <div className="rp-price"><GiDividedSquare  fontSize="1.2em" color="gold" /> <span className="price-number">350</span></div>
 							        </div>
 						        </div>
 						    </article>)

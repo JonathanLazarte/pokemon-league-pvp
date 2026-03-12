@@ -2,6 +2,7 @@ import './styles.css'
 import {react, useState, useEffect, memo, useRef} from 'react'
 import Card from '../../components/cards/pokeCard.jsx'
 import {useSelector, useDispatch} from 'react-redux'
+import { selectUserPokemonData } from '../../redux/slices/userPokemonSlice.js';
 import {useLocation} from 'wouter'
 import { BsSearch } from "react-icons/bs"
 import { FaCheck } from "react-icons/fa6";
@@ -15,7 +16,7 @@ export default memo(function MainPage(){
 	const [pokemon, setPokemon] = useState([]);
 	const [renderData, setRenderData] = useState([]) 
 	const [searchKeys, setSearchKeys] = useState()
-	const {loading, pokemonStore, error} = useSelector(state => {return state.pokemonReducer})
+	const {loading, userPokemon, error} = useSelector(selectUserPokemonData)
     const [types, setTypes] = useState()
     const [typeSelected, setTypeSelected] = useState()
     const [generations, setGenerations] = useState()
@@ -204,7 +205,7 @@ export default memo(function MainPage(){
             const typeFilter = typeSelected ? type.pokemon.some(pokemon => pokemon.pokemon.name == poke.name) : true;
             const generationFilter = generationSelected ? gen['pokemon_species'].some(pokemon => pokemon.name == poke.name) : true;
             const keyFilter = searchKeys ? poke.name.startsWith(searchKeys.toLowerCase()) : true;
-            const inCollectionFilter = inCollection ? pokemonStore.some(pokemon => pokemon.name == poke.name) : true;
+            const inCollectionFilter = inCollection ? userPokemon.some(pokemon => pokemon.name == poke.name) : true;
 
             return typeFilter && keyFilter && generationFilter && inCollectionFilter;
         })
@@ -265,25 +266,25 @@ export default memo(function MainPage(){
                         Mostrar en colección
                     </div>
 
-                    <select className="select-filter" onChange={(event)=>{setTypeSelected(event.currentTarget.value)}}>
+                    <div className="select-container"><select className="select-filter" onChange={(event)=>{setTypeSelected(event.currentTarget.value)}}>
                     
                         <option value="" >Todos los pokemon</option>
                         {typeNames?.map((type, index) => <option key={index} value={type.name.toLowerCase()}>{type.name}</option>)}
                     
-                    </select>
-                    <select className="select-filter" onChange={(event)=>{setGenerationSelected(event.currentTarget.value)}}>
+                    </select></div>
+                    <div className="select-container"><select className="select-filter" onChange={(event)=>{setGenerationSelected(event.currentTarget.value)}}>
                     
                         <option value="">Todas las generaciones</option>
                         {generationNames?.map((gen, index) => <option key={index} value={index}>{gen.name}</option>)}
                     
-                    </select>
+                    </select></div>
 
-                    <select className="select-filter" onChange={(event)=>{setPokemonFrom(event.currentTarget.value)}}>
+                    <div className="select-container"><select className="select-filter" onChange={(event)=>{setPokemonFrom(event.currentTarget.value)}}>
 
                         <option value="All">Alfabético</option>
                         <option value ="User">Tasa de aparición</option>
 
-                    </select>
+                    </select></div>
 
                 </div>
 

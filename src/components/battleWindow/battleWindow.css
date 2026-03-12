@@ -5,6 +5,7 @@
 	align-items: center;
 	justify-content: center;
 	right: 0px;
+  top: 0px;
 	width: 25%;
 	height: 35%;
 	background-color: rgba(0, 0, 0, 0.6);
@@ -21,6 +22,9 @@
 .levelup-window span{
   box-shadow: 0px;
 }
+.levelup-window .obtained-stat{
+  color: limegreen;
+}
 
 .battlefield-section{
   display: flex;
@@ -33,27 +37,35 @@
 .canvas {
   position: relative;
   width: 1025px;
-  height: 800px;
+  height: 100%;//height: 800px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border: 3px solid white;
+  border: 0px solid white;
   display: flex;
   flex-direction: column;
-  text-shadow: -0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
+  //text-shadow: -0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
   background-image: url('/R.png');
-  background-repeat: no-repeat;
-  background-position: 0px -20px;
+  background-repeat: repeat;
+  background-position: 0px -15px;
+  background-size: contain;
   overflow: hidden;
+  font-family: 'Arial Black', sans-serif;
+  text-shadow: 
+  2px 2px 0px #000000, /* Borde negro nítido para legibilidad */
+  -2px -2px 0px #000000, /* Refuerza el contorno en todas direcciones */
+  3px 3px 6px rgba(0, 0, 0, 0.6); /* Sombra difuminada para profundidad */
+  color: #ffffff;
 }
 
+.canvas h1, h2, h3{
+  margin: 0px;
+  color: #ffffff;
+}
 .canvas h1{
-margin: 0px;
+  font-size: 1.5rem;
 }
 .canvas h2{
-  margin: 0;
-}
-.canvas h3{
-  margin: 0;
+  font-size: 1rem;
 }
 
 .canvas .player-two-container {
@@ -73,7 +85,9 @@ margin: 0px;
   height: 40%;
 
 }
-.canvas .player-two-container h2 span{display: flex; transition-timing-function: ease-out;}
+.canvas .player-two-container h2 span {
+  display: flex; transition-timing-function: ease-out;
+}
 
 
 .canvas .player-two-container #ai-image {
@@ -94,7 +108,7 @@ margin: 0px;
 
 
 .canvas #pokeballsP2 {
- width: 45%;
+ width: 420px;
  padding: 0px;
  display: flex;
  flex-direction: column;
@@ -108,32 +122,39 @@ margin: 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 20px 0px 10px;
+  padding: 0px 15px 0px 20px;
   width: 100%;
+  font-size: 15px;
+  background-color: rgba(50, 50, 50, 1.0);
+  height: 40px;
+  border-radius: 10px;
+  border-bottom-left-radius: 30px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+.health-count-p2, .health-count-p1, .health-count-p2 span, .health-count-p1 span {
+  white-space: nowrap;
+  margin: 0;
+  font-size: 1rem;
+  font-family: 'VT323', monospace; /* Alternativa pixelada más legible */
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
 
-}
-.health-count-p2 {
-width: 30%;
-margin: 0;
-}
-
-.name-box-two{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 45px;
-  padding-left: 5px;
-}
-.name-box-one{
+.name-box-one, .name-box-two{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding-right: 35px;
   padding-left: 5px;
+  white-space: nowrap;
 }
-
+.name-box-two h1, .name-box-one h1{
+  width: 85%;
+  padding-left: 4px;
+  overflow: hidden;
+}
 .name-box-one h2{
   display: flex;
   align-items: center;
@@ -145,38 +166,47 @@ margin: 0;
 }
 
 .canvas #pokeballsP2 .hp-container-mew .bar {
-  width: 85%;
-  height: 20px;
+  width: 75%;
+  height: 15px;
   color: red;
-  border-radius: 40px;
+  border-radius: 0px;
   transition: all 2s ease-out;
 }
 
 .canvas #pokeballsP2 .hp-container-mew .bar::-webkit-progress-bar{
   background-color: black;
-  border: 2px solid #ffffff;
+  border: 1px solid black;
   border-radius: 5px;
-  border-bottom-right-radius: 12px;
+  border-bottom-right-radius: 5px;
 }
 .canvas #pokeballsP2 .hp-container-mew .bar::-webkit-progress-value{
-  background-color: mediumvioletred;
+  background: linear-gradient(to bottom, #3CB371 50%, #228B22 60%, #006400 100%);
   transition: all 1.5s ease-out;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .canvas #pokeballsP1 progress::-webkit-progress-bar{
   background-color: black;
-  border: 2px solid #ffffff;
+  border: 1px solid black;
   border-radius: 5px;
-  border-bottom-right-radius: 12px;
+  border-bottom-right-radius: 5px;
 }
 .canvas #pokeballsP1 progress::-webkit-progress-value{
-  background-color: mediumblue;
+  //background: linear-gradient(to right, #228B22 0%, #90EE90 50%, #228B22 100%);  /*horizontal*/
+  background: linear-gradient(to bottom, #3CB371 50%, #228B22 60%, #006400 100%);
   transition: all 1.5s ease-out;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
+.pokemon-health-bar.low-health {
+  background: linear-gradient(to right, #DAA520 0%, #F0E68C 50%, #DAA520 100%); /* Tonos dorados apagados */
+  background: linear-gradient(to bottom, #FF8C00 0%, #FF4500 50%, #D2691E 100%);
+}
 
+.pokemon-health-bar.critical-health {
+  background: linear-gradient(to right, #8B0000 0%, #CD5C5C 50%, #8B0000 100%); /* Rojos oscuros */
+  background: linear-gradient(to bottom, #FF0000 0%, #C71585 50%, #8B0000 100%);
+}
 
 .canvas #pokeballsP1 {
   height: 50%;
@@ -184,29 +214,32 @@ margin: 0;
   justify-content: space-between;
   padding: 0px 40px 0px 0px;
 
- 
 }
 
 .canvas #pokeballsP1 .hp-container {
-  margin-top: 4px;
-  height: 23px;
   width: 100%;
-  padding: 0px 10px;
+  padding: 0px 15px 0px 20px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   justify-content: space-between;
   align-content: center;
-  align-items: flex-end;
+  align-items: center;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  position: unset;
+  background-color: rgba(50, 50, 50, 1.0);
+  height: 40px;
+  border-radius: 10px;
+  border-bottom-left-radius: 30px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
 .canvas #pokeballsP1 .hp-container .bar {
-  width: 100%;
-  height: 100%;
+  width: 75%;
+  height: 15px;
   background-color: green;
   border-radius: 40px;
   transition: all 2s ease-out;
@@ -247,18 +280,19 @@ margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  width: 45%;
+  width: 420px;
   padding-bottom: 40px;
 }
-.canvas .player-one-container .attack-container {
-  padding: 0px!important;
-  height: 100%!important;
+.attack-container {
+  padding: 0px;
+  height: 85%;
   width: 85%;
   margin: auto;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
+  -ms-grid-columns: repeat(2, 45%);
+      grid-template-columns: repeat(2, 45%);
+  grid-template-rows: repeat(2, 1fr);
   grid-gap: 10px;
   justify-items: center;
   justify-content: center;
@@ -267,24 +301,26 @@ margin: 0;
   text-align: center;
 }
 
-.attack-container button {
-  outline: none;
-  border: none;
-  background-color: transparent;
-  font-size: 2rem;
-  border-radius: 4px;
-  width: 100%;
-  cursor: pointer;
-}
-.canvas .player-one-container div button:hover {
-  opacity: 1; 
-}
 
 
+.pp-type {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.pp-type span{
+  color: white;
+  font-size: 1.3rem;
+  margin-right: 10px;
+}
+.pp-type img{
+  width: 65px;
+}
 #pokeballsP1  .health-count-p1 {
+  white-space: nowrap;
   margin-right: 6px;
-   width: 110px;
-   height: 25px;
+   /*width: 110px;
+   height: 25px;*/
 }
 
 
@@ -294,190 +330,141 @@ progress[value]::-webkit-progress-value {
 
 
 
-
-
-
- /* .player-one-container .attack-container .normal{border: 1 px gray; opacity: 0.8}
-  .player-one-container .attack-container .fighting{background-color: dimgray; opacity: 0.8}
-  .player-one-container .attack-container .fire{background-color: red; opacity: 0.8}
-  .player-one-container .attack-container .water{background-color: blue; opacity: 0.8}
-  .player-one-container .attack-container .grass{background-color: green; opacity: 0.8}
-  .player-one-container .attack-container .flying{background-color: lightblue; opacity: 0.8}
-  .player-one-container .attack-container .poison{background-color: violet; opacity: 0.8}
-  .player-one-container .attack-container .bug{background-color: greenyellow; opacity: 0.8}
-  .player-one-container .attack-container .electric{background-color: yellow; opacity: 0.8; color: black;}
-  .player-one-container .attack-container .ground{background-color: brown; opacity: 0.8}
-  .player-one-container .attack-container .fairy{background-color: pink; opacity: 0.8 }
-
-  .player-one-container .attack-container .rock{background-color: darkgray; opacity: 0.8}
-  .player-one-container .attack-container .bug{background-color: greenyellow; opacity: 0.8}
-  .player-one-container .attack-container .ghost{background-color: darkviolet; opacity: 0.8; color: black;}
-  .player-one-container .attack-container .steel{background-color: lightsteelblue; opacity: 0.8}
-  .player-one-container .attack-container .psychic{background-color: lightcoral; opacity: 0.8 }
-
-  .player-one-container .attack-container .dragon{background-color: lightskyblue; opacity: 0.8}
-  .player-one-container .attack-container .dark{background-color: darkslategray; opacity: 0.8}
-  .player-one-container .attack-container .ice{background-color: deepskyblue; opacity: 0.8; color: ;} 
-
-
- .player-one-container .attack-container .normal{border: 5px solid gray; opacity: 0.8}
-  .player-one-container .attack-container .fighting{background-color: dimgray; opacity: 0.8}
-  .player-one-container .attack-container .fire{background-color: red; opacity: 0.8}
-  .player-one-container .attack-container .water{background-color: blue; opacity: 0.8}
-  .player-one-container .attack-container .grass{border:5px solid green;background-color: white; opacity: 0.9;color:green; }
-  .player-one-container .attack-container .flying{color: lightblue; background-color: white; border: 5px solid lightblue; opacity: 0.9}
-  .player-one-container .attack-container .poison{color:violet;background-color:white ;border: 5px solid violet; opacity: 0.9}
-  .player-one-container .attack-container .bug{background-color: greenyellow; opacity: 0.8}
-  .player-one-container .attack-container .electric{background-color: yellow; opacity: 0.8; color: black;}
-  .player-one-container .attack-container .ground{background-color: brown; opacity: 0.8}
-  .player-one-container .attack-container .fairy{background-color: pink; opacity: 0.8 }
-
-  .player-one-container .attack-container .rock{background-color: darkgray; opacity: 0.8}
-  .player-one-container .attack-container .bug{background-color: greenyellow; opacity: 0.8}
-  .player-one-container .attack-container .ghost{background-color: darkviolet; opacity: 0.8; color: black;}
-  .player-one-container .attack-container .steel{background-color: lightsteelblue; opacity: 0.8}
-  .player-one-container .attack-container .psychic{background-color: lightcoral; opacity: 0.8 }
-
-  .player-one-container .attack-container .dragon{background-color: lightskyblue; opacity: 0.8}
-  .player-one-container .attack-container .dark{background-color: darkslategray; opacity: 0.8}
-  .player-one-container .attack-container .ice{border:5px solid deepskyblue;background-color: white; opacity: 0.9; color: deepskyblue;} */
-
-.player-one-container .attack-container .normal,
-.player-one-container .attack-container .fighting,
-.player-one-container .attack-container .fire,
-.player-one-container .attack-container .water,
-.player-one-container .attack-container .grass,
-.player-one-container .attack-container .flying,
-.player-one-container .attack-container .poison,
-.player-one-container .attack-container .bug,
-.player-one-container .attack-container .electric,
-.player-one-container .attack-container .ground,
-.player-one-container .attack-container .fairy,
-.player-one-container .attack-container .rock,
-.player-one-container .attack-container .ghost,
-.player-one-container .attack-container .steel,
-.player-one-container .attack-container .psychic,
-.player-one-container .attack-container .dragon,
-.player-one-container .attack-container .dark,
-.player-one-container .attack-container .ice {
-    border-color: white!important;
-    opacity: 0.9;
-    font-size: 30px;
-    color:white!important;
-    /*text-shadow: -0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
-*/}
+:root {
+    --background-opacity: 0.4; /* Opacidad para los fondos */
+    --border-opacity: 0.7;    /* Opacidad para los bordes, ajustable por separado */
+}
 
 .player-one-container .attack-container .normal {
-    border: 4px solid #fafafa;
-    background-color: darkgray;
+    border-color: rgba(211, 211, 211, var(--border-opacity)); /* Gris claro */
+    background: linear-gradient(to bottom, 
+        rgba(211, 211, 211, var(--background-opacity)) 0%, /* Gris claro */
+        rgba(169, 169, 169, var(--background-opacity)) 50%, /* Gris oscuro suave */
+        rgba(128, 128, 128, var(--background-opacity)) 100% /* Gris más oscuro */
+    );
 }
 
 .player-one-container .attack-container .fighting {
-    border: 4px solid lightgray;
-    background-color: darkred;
+    border-color: rgba(200, 50, 50, var(--border-opacity)); /* Rojo oscuro */
+    background-color: rgba(194, 46, 40, var(--background-opacity)); /* Rojo oscuro */
 }
 
 .player-one-container .attack-container .fire {
-    border: 4px solid red;
-    background-color: red;
+    border-color: rgba(255, 99, 71, var(--border-opacity)); /* Coral rojizo */
+    background-color: rgba(255, 69, 0, var(--background-opacity)); /* Naranja rojizo */
 }
 
 .player-one-container .attack-container .water {
-    border: 4px solid blue;
-    background-color: blue;
+    border-color: rgba(0, 102, 204, var(--border-opacity)); /* Azul profundo */
+    background-color: rgba(0, 119, 190, var(--background-opacity)); /* Azul acuático */
 }
 
 .player-one-container .attack-container .grass {
-    border: 4px solid green;
-    bakground-color: green;
+    border-color: rgba(46, 139, 87, var(--border-opacity)); /* Verde bosque */
+    background-color: rgba(76, 175, 80, var(--background-opacity)); /* Verde vivo */
 }
 
 .player-one-container .attack-container .flying {
-    border: 4px solid lightblue;
-    background-color: lightblue;
+    border-color: rgba(100, 149, 237, var(--border-opacity)); /* Azul cornflower */
+    background-color: rgba(135, 206, 235, var(--background-opacity)); /* Azul celeste */
 }
 
 .player-one-container .attack-container .poison {
-    border: 4px solid violet;
-    background-color: violet;
+    border-color: rgba(138, 43, 226, var(--border-opacity)); /* Morado intenso */
+    background-color: rgba(153, 50, 204, var(--background-opacity)); /* Morado intenso */
 }
 
 .player-one-container .attack-container .bug {
-    border: 4px solid greenyellow;
-    background-color: greenyellow;
+    border-color: rgba(127, 255, 0, var(--border-opacity)); /* Verde lima oscuro */
+    background-color: rgba(173, 255, 47, var(--background-opacity)); /* Verde lima */
 }
 
 .player-one-container .attack-container .electric {
-    border: 4px solid yellow;
-    background-color: yellow;
+    border-color: rgba(255, 255, 0, var(--border-opacity)); /* Amarillo puro */
+    background-color: rgba(255, 215, 0, var(--background-opacity)); /* Amarillo brillante */
 }
 
 .player-one-container .attack-container .ground {
-    border: 4px solid brown;
-    background-color: brown;
+    border-color: rgba(139, 69, 19, var(--border-opacity)); /* Marrón tierra */
+    background-color: rgba(139, 69, 19, var(--background-opacity)); /* Marrón tierra */
 }
 
 .player-one-container .attack-container .fairy {
-    border: 4px solid pink;
-    background-color: pink;
+    border-color: rgba(255, 182, 193, var(--border-opacity)); /* Rosa claro */
+    background-color: rgba(255, 105, 180, var(--background-opacity)); /* Rosa suave */
 }
 
 .player-one-container .attack-container .rock {
-    border: 4px solid darkgray;
-    background-color: darkgray;
+    border-color: rgba(105, 105, 105, var(--border-opacity)); /* Gris medio */
+    background-color: rgba(112, 112, 112, var(--background-opacity)); /* Gris rocoso */
 }
 
 .player-one-container .attack-container .ghost {
-    border: 4px solid darkviolet;
-    background-color: blackviolet;
+    border-color: rgba(75, 0, 130, var(--border-opacity)); /* Morado oscuro */
+    background-color: rgba(112, 48, 160, var(--background-opacity)); /* Morado oscuro */
 }
 
 .player-one-container .attack-container .steel {
-    border: 4px solid lightsteelblue;
-    background-color: lightsteelblue;
+    border-color: rgba(119, 136, 153, var(--border-opacity)); /* Gris acero */
+    background-color: rgba(170, 183, 190, var(--background-opacity)); /* Azul acero */
 }
 
 .player-one-container .attack-container .psychic {
-    border: 4px solid lightcoral;
+    border-color: rgba(220, 20, 60, var(--border-opacity)); /* Rojo coral */
     color: white;
-    background-color: lightcoral;
-    background-border: 4px solid white;
+    background-color: rgba(255, 99, 71, var(--background-opacity)); /* Coral psíquico */
 }
 
 .player-one-container .attack-container .dragon {
-    border: 4px solid lightskyblue;
-    background-color: lightskyblue;
+    border-color: rgba(0, 191, 255, var(--border-opacity)); /* Azul dragón */
+    background-color: rgba(0, 191, 255, var(--background-opacity)); /* Azul dragón */
 }
 
 .player-one-container .attack-container .dark {
-    border: 4px solid darkslategray;
-    background-color: darkslategray;
+    border-color: rgba(47, 79, 79, var(--border-opacity)); /* Gris oscuro */
+    background-color: rgba(47, 79, 79, var(--background-opacity)); /* Gris oscuro */
 }
 
 .player-one-container .attack-container .ice {
-    border: 4px solid deepskyblue;
-    background-color: deepskyblue;
+    border-color: rgba(135, 206, 250, var(--border-opacity)); /* Azul hielo claro */
+    background-color: rgba(0, 191, 255, var(--background-opacity)); /* Azul hielo */
 }
 
 
-.player-one-container .attack-container button {
+
+
+.attack1{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 7vh;
+  white-space: nowrap;
+  border-color: white;
+  opacity: 0.9;
+  font-size: 1rem;
+  color:white;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra suave */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra en texto */
+  padding: 10px;
 }
-.player-one-container .attack-container button img{
-          width: 50px;
+.attack1:hover {
+  opacity: 1; 
 }
+
 
 
 
 .game-over-window {
   z-index: 2;
   background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  width: 1025px;
-  height: 800px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   margin:auto;
@@ -485,8 +472,8 @@ progress[value]::-webkit-progress-value {
   flex-direction: column;
   justify-content: center;
   align-items: center;
- text-shadow: -0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
- margin-bottom: 100px;
+  text-shadow: -0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
+  margin-bottom: 100px;
 }
 .game-over-window h1{
   font-size: 50px;
@@ -494,14 +481,15 @@ progress[value]::-webkit-progress-value {
 .game-over-window button{
   outline: none;
   border: none;
-  border-radius: 10px;
-  height: 40px;
-  width: 150px;
+  border-radius: 5px;
+  height: 35px;
+  width: 110px;
   cursor: pointer;
   background-color: rgba(200, 0, 0, 0.8);
-  border: 2px solid white;
+  border: 1px solid white;
   color: white;
-
+  text-transform: uppercase;
+  font-size: 0.6em;
 }
 .game-over-window button:hover{
   background-color: rgba(200, 0, 0, 0.9);
@@ -515,8 +503,25 @@ progress[value]::-webkit-progress-value {
   font-size: 1.2em;
 }
 
+.types-in-battle{
+  display: flex;
+  flex-direction: row;
+  margin-right: 5px;
+  display: none;
+}
 
+.types-in-battle img{
+  width: 60px;
+}
 
+.pokeballs{
+  margin-top: 0px;
+  padding-left: 25px;
+}
+.pokeballs img{
+  width: 25px;
+  margin-right: 2px;
+}
 
 
 
@@ -526,104 +531,204 @@ progress[value]::-webkit-progress-value {
 	  height: 100%;
 	  -webkit-box-sizing: border-box;
 	          box-sizing: border-box;
-	  border: 3px solid white;
+	  border: 0px solid white;
 	  display: flex;
 	  flex-direction: column;
-	  text-shadow: -0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,-0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,-0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937;
+	  //text-shadow: -0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,-0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,-0rem -0rem 0 #1F2937,0rem -0rem 0 #1F2937,-0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937,0rem 0rem 0 #1F2937;
 	  background-image: url('/R.png');
-	  background-repeat: no-repeat;
-	  background-position: -100px -20px;
-    background-size: cover;
+	  background-position: -120px -120px;
+    background-size: auto;
 	  overflow: hidden;
 	  font-size: 0.5em;
 	}
+  .canvas h1{
+    font-size: 0.9rem;
+    white-space: nowrap;
+    margin-right: 5px;
+    padding-left: 0px;
+  }
+  .types-in-battle{
+    flex-direction: row;
+    margin-right: 2px;
+  }
 	.canvas #pokeballsP1{
 		padding: 0px 0px 0px 0px;
     flex-direction: column;
-    height: 55%;
-	}
-  .player-one-data{
-    margin-left: 13%;
-    width: 85%;
-    height: 100%;
-    margin-right: 5px;
-    align-items: flex-end;
-    padding-bottom: 5px;
-  }
-	.name-box-one{
-		width: 98%;
-		padding: 0px;
-    font-size: 1.3em;
-	}
-  .name-box-one h2 img{
-    height: 100%;
-    width: 50%;
-  }
-  .name-box-one h2{
-    font-size: 1.4em;
-    margin-right: 40px;
-  }
-  .name-box-two {
-    font-size: 1.2em;
-  }
-  .name-box-two h2{
-    font-size: 1.4em;
-  }
-  .health-count-p2{
-    font-size: 1.5em;
-  }
-	.canvas #pokeballsP1 .hp-container{
-		padding: 0px;
+    height: 65%;
     align-items: flex-start;
-    width: 95%;
-    font-size: 1.4em;
+    padding-left: 20px;
 	}
-  #pokeballsP1 .health-count-p1{
-    width: 30%;
+  .canvas .player-one-container{
+    height: 80%;
+  }
+  .player-one-data{
+    width: 185px;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 1;
+  }
+	.name-box-one, .name-box-two{
+		width: 100%;
+		padding: 0px;
+    justify-content: flex-start;
+	}
+  .name-box-one h2 img, .name-box-two h2 img{
+    width: 30px;
+  }
+  .name-box-one h2, .name-box-two h2{
+    font-size: 12px;
+    margin-right: 0px;
+  }
+  #pokeballsP1 .health-count-p1, .health-count-p2{
+    align-content: center;
+    font-size: 12px;
+    white-space: nowrap;
+    margin: 0px;
+    margin-right: 5px;
+    width: unset;
+  }
+  #pokeballsP1 .health-count-p1 span, .health-count-p2 span{
+    font-size: 12px;
+  }
+  .canvas #pokeballsP1 .hp-container{
+    align-items: center;
+    margin-top: 0px;
+    padding-right: 5px;
+    height: unset;
+    justify-content: flex-start;
+    height: 25px;
   }
   .canvas #pokeballsP1 .hp-container .bar{
-    height: 20px;
+    height: 10px;
+    width: 65%;
+  }
+  .canvas #pokeballsP2 .hp-container-mew{
+    height: 25px;
+    padding-right: 5px;
+    justify-content: flex-start;
+  }
+  .canvas #pokeballsP2 .hp-container-mew .bar{
+    height: 10px;
+    width: 65%;
   }
   .canvas .player-two-container{
     padding: 20px;
+    padding-right: 20px;
     height: 40%;
+    justify-content: flex-end;
   }
   .canvas #pokeballsP2{
     padding: 0px 0px 0px 0px;
-    width: 100%;
-    height: 20%;
+    width: 185px;
+    z-index: 1;
   }
   .canvas .player-two-container #ai-image{
     margin: 0px;
-    margin-top: 20%;
-  }
-  .canvas #pokeballsP2 .hp-container-mew .bar{
-    height: 20px;
+    position: absolute;
+    top: 19%;
+    right: 7%;
   }
   .actions-container{
     width: 100%;
   }
   .canvas #charmander{
-    width: 100%;
-    scale: 1.5;
+    scale: 2.5;
+    position: absolute;
+    left: 12%;
+    bottom: 37%;
   }
   .game-over-window {
     width: 100%;
     height: 100%;
   }
   .player-one-container .attack-container .attack1.btn{
-    font-size: 1em;
-    height: 7vh;
-
-  }
-  .canvas .player-one-container .attack-container{
-    margin: 0px;
+    font-size: 11px;
+    border-radius: 5px;
     width: 100%;
-    grid-gap: 15px;
+    height: 100%;
+    overflow: hidden;
+    padding: 10px;
+  }
+  .move-name{
+    width: 60%;
+    overflow: hidden;
+    white-space: normal;
+    align-items: start;
+    align-content: start;
+    justify-content: start;
+    text-align: left;
+  }
+  .canvas .player-one-container .attack-container {
+    padding: 0px!important;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 40% 40%;
+    grid-template-rows: repeat(2, 40%);
+    grid-gap: 5px;
+    justify-items: center;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .pp-type{
+    display: flex;
+    flex-direction: column;
+  }
+  .pp-type span{
+    font-size: 12px;
+    margin-right: 0px;
+    margin-bottom: 2px;
+  }
+  .pp-type img{
+    width: 55px;
   }
   .damage-one{
-     top: 20%;
+     top: 30%;
      left: 80%;
      font-size: 20px;
+  }
+  .pokeballs img{
+    width: 17px;
+  }
+  .game-over-window h1{
+    font-size: 2rem;
+  }
+  .game-over-window button{
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    width: 80px;
+    cursor: pointer;
+    background-color: rgba(200, 0, 0, 0.8);
+    border: 1px solid white;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.95em;
+    margin-top: 5px;
+  }
+  .levelup-window{
+    width: 50%;
+    height: 30%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+    border-radius: 4px;
+  }
+  .levelup-stat{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 70%;
+    margin-bottom: 0px;
+  }
+  .levelup-stat span{
+    color: #fafafa;
+    font-size: 0.8rem;
   }
 }

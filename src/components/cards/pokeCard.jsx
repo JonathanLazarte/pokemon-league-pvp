@@ -1,15 +1,10 @@
 import {react, memo} from 'react'
-import {getPokemon, addPokemon} from '../../store/actions/pokemonActions.js'
-import {useSelector, useDispatch} from 'react-redux'
 import { GiDoubled, GiDividedSquare } from "react-icons/gi";
 import './pokeCard.css'
 
 
 const pokeCard = ({ id, data, section, onClick })=>{
-        const {VITE_API_URL : API_URL} = import.meta.env;
-        const token = localStorage.getItem('token')
         const pokemonIndex = (data.url?.split("/")[4])
-        const dispatch = useDispatch()
         const typesArray = [
         {
             "name": "normal",
@@ -108,8 +103,8 @@ const pokeCard = ({ id, data, section, onClick })=>{
             <div className="product-info">
             <h2 className="title">{data.name.toUpperCase()}</h2> 
             <div className="price">
-                <div className="essences-price"><GiDoubled  fontSize="1.1em" color="0ACBE6" />2000</div> 
-                <div className="rp-price"><GiDividedSquare  fontSize="1.1em" color="gold" /> 350</div>
+                <div className="essences-price"><GiDoubled  fontSize="1.1em" color="0ACBE6" /><span className="price-number">2000</span></div> 
+                <div className="rp-price"><GiDividedSquare  fontSize="1.1em" color="gold" /> <span className="price-number">350</span></div>
             </div>
             </div> ) : <h2 className="title">{data.name.toUpperCase()}</h2> }     
     </article>

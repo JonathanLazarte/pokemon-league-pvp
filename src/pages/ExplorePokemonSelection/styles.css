@@ -1,16 +1,26 @@
 .pokemon-selection{
   display: flex;
   flex-direction: row;
-  align-items: centers;
+  align-items: center;
   align-content: center;
   justify-content: center;
   margin: auto;
-  margin-bottom: 0;
+  margin-bottom: 20px;
   height: auto;
   width: 90%;
+  height: 85%;
   //text-shadow:-0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
 }
-
+.pokemon-selection .pokemon-list-container{
+  width: 35%;
+  height: 90%;
+  align-items: center;
+  //overflow-y: auto; /* Scroll si hay muchos Pokémon */
+    //scrollbar-width: thin; /* Estilo de scrollbar moderno */
+    //scrollbar-color: #00ffcc #1a1a1a;
+    overflow: scroll;
+    border-bottom: 1px solid var(--gold-five); 
+}
 .pokemon-selection .ready-section{
   display: none;
 }
@@ -57,11 +67,15 @@
 @media (max-width: 767px){
   .pokemon-selection{
     flex-direction: column;
+    width: 90%;
   }
-  .explore-room .pokemon-selection .list-pokemon{
-    height: 70vh!important;
+  .pokemon-selection .pokemon-list-container{
+    width: 100%;
+  }
+  .pokemon-one{
+    width: 90%;
   }
   .pokemon-selection .pokemon-view{
-  width: 100%;
+    
   }
 }

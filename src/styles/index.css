@@ -6,7 +6,7 @@
   line-height: 1.5;
   font-weight: 400;
   color: rgba(255, 255, 255, 1);
-  background-color: #12161f;
+  background-color: rgba(25, 0, 0, 1.0);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   /*-webkit-font-smoothing: antialiased;
@@ -56,6 +56,10 @@ span {
   font-size: 15px;
   font-family: Spiegel-Regular;
   color: #A09B8C;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    display: none;
 }
 
 @font-face {

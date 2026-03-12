@@ -6,8 +6,10 @@
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	height: 100%;
 	border-radius: 5px;
 	padding: 50px;
+	padding-top: 30px;
 	align-items: flex-start;
 	justify-content: flex-start;
 	z-index: 1;
@@ -29,8 +31,8 @@
 }
 .move-item{
 	width: 100%;
-	height: 8vh;
-	border: 1px solid white;
+	height: 7vh;
+	border: 1px solid rgba(250, 250, 250, 0.5);
 	border-radius: 4px;
 	margin-bottom: 10px;
 	cursor: pointer;
@@ -41,10 +43,14 @@
 .sprite-name{
 	display: flex;
 	height: 50%;
-	font-size: 1.4em;
+	font-size: 1.rem;
 	align-items: flex-start;
 	align-content: flex-start;
 	vertical-align: baseline;
+	white-space: nowrap;
+	padding-right: 10px;
+	overflow: hidden;
+	width: 98%;
 }
 .sprite-name img{
 	height: 60%;
@@ -53,7 +59,7 @@
 .pp{
 	display: flex;
 	justify-content: space-evenly;
-	font-size: 1.5em;
+	font-size: 1.2em;
 }
 .move-details{
 	width: 50%;
@@ -61,6 +67,7 @@
 	display: flex;
 	flex-direction: column;
 	background-color: rgba(22, 0, 0, 1);
+	font-size: 0.8rem;
 }
 .move-details h1{
 
@@ -78,17 +85,38 @@
 
 }
 
-
+.moves-comeback-button{
+	background: linear-gradient(rgba(40, 20, 20, 0.1), rgba(40, 20, 20, 0.4));
+    border: 1px solid var(--gold-one); /* Borde dorado */
+    color: darkgray; /* Texto dorado */
+    /*font-family: 'Montserrat', sans-serif; /* Fuente moderna */
+    font-size: 1rem; /* Tamaño de fuente */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    cursor: pointer; /* Cursor de puntero */
+    box-shadow: 0 0 3px rgba(200, 170, 110, 0.5); /* Sombra dorada */
+    transition: all 0.2s ease; /* Transición suave */
+    position: relative;
+    overflow: hidden;
+    margin-right: 10px;
+    border-image: linear-gradient(to bottom, var(--gold-one), var(--gold-two), var(--gold-four)) 1;
+   	width: 40px;
+   	height: 40px;
+   	display: flex;
+   	justify-content: center;
+   	align-content: center;
+   	align-items: center;
+	}
 
 @media (max-width: 767px){
 	.moves-window{
 		height: 100%;
+		padding: 15px;
 	}
 	.main-box{
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-end;
-		height: 90%;
+		height: 78%;
 		width: 100%;
 	}
 	.moves-container{
@@ -106,6 +134,7 @@
 		border-radius: 4px;
 		margin-bottom: 10px;
 		cursor: pointer;
+		font-size: 14px;
 	}
 	.move-item:hover{
 		background-color: rgba(250, 250, 250, 0.02);
@@ -134,23 +163,43 @@
 		flex-direction: column;
 		background-color: rgba(22, 0, 0, 1);
 	}
+	.poke-info{
+		display: flex;
+		margin-top: 10%;
+		margin-bottom: 10%;
+	}
+	.types-sprites{
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	.types-sprites img{
+		width: 40px;
+	}
+	.moves-pokemon-sprite{
+		width: 80px;
+		height: 80px;
+		scale: 1.2;
+	}
 	h2 {
 		font-size: 1em;
 	}
 	.move-details h2{
-		font-size: 0.8em;
+		font-size: 12px;
 	}
 	.move-info{
 		height: 50%;
+		width: 90%;
 	}
-	.poke-info{
-		display: flex;
-		margin-top: 15%;
-		margin-bottom: 5%;
-	}
-
+	
 	p{
-		font-size: 0.7em;
+		font-size: 9px;
+	}
+	.moves-comeback-button{
+	    width: 35px;
+	    height: 35px;
+	    font-size: 15px;
 	}
 	
 }

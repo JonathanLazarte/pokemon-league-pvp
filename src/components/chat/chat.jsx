@@ -15,7 +15,7 @@ export default memo(function({showChat, selectedUser, chatMessages, handleEmitCh
 
 	return <>
 		{showChat && <div className="chat">
-        	<div className="chatHead">
+        	<div style={{paddingLeft: !selectedUser ? '20px' : null }} className="chatHead">
         		{selectedUser && <div style={{marginRight: "10px"}} className="icon-border mini">
 			 		<img className="user-icon mini" src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/profileicon/${userSelectedInfo?.profileIcon}.png`}></img>
 			 		<div className="box-status-icon"/>
@@ -23,7 +23,7 @@ export default memo(function({showChat, selectedUser, chatMessages, handleEmitCh
        			{selectedUser ? selectedUser : "Selecciona un chat"}
         	</div>
         	<div className="chat-messages">{chatMessages && chatMessages.map(cm =>  (cm.from == selectedUser && <span style={{textAlign:"left"}} >{cm.message}</span> || cm.to == selectedUser && <span style={{textAlign:"right"}}>{cm.message}</span>) )}</div>
-        	<form onSubmit={(e)=>{handleEmitChatMessage({chatInput,e});setChatInput("")}} className="chat-form"><input value={chatInput} onChange={(e)=>setChatInput(e.currentTarget.value)} className="input-chat" placeholder={"Escribe aquí..."}></input></form>
+        	<form onSubmit={(e)=>{handleEmitChatMessage({e, chatInput});setChatInput("")}} className="chat-form"><input value={chatInput} onChange={(e)=>setChatInput(e.currentTarget.value)} className="input-chat" placeholder={"Escribe aquí..."}></input></form>
       	</div>}
       </>
 })

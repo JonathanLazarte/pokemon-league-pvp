@@ -1,7 +1,8 @@
 import './pokemonMoves.css'
 import {useState} from 'react'
 import {useDispatch} from 'react-redux'
-import {updatePokemon} from '../../store/actions/pokemonActions.js'
+import { updatePokemon } from '../../redux/slices/userPokemonSlice.js'
+import { IoArrowBackOutline } from "react-icons/io5";
 
 
 export default function MovesWindow({pokemon, moveToLearn, showWindow}){
@@ -47,12 +48,15 @@ export default function MovesWindow({pokemon, moveToLearn, showWindow}){
 		<h2>MOVIMIENTOS</h2>
 			<div className="main-box">
 						{move && <div className="move-details">
-							<div className="poke-info"><img src={pokemon.sprites.versions["generation-viii"].icons.front_default}></img>{renderTypes(pokemon)}</div>
+							<div className="poke-info">
+								<img className="moves-pokemon-sprite" src={pokemon.sprites.versions["generation-viii"].icons.front_default}></img>
+								<div className="types-sprites">{renderTypes(pokemon)}</div>
+							</div>
 							<div className="move-info">
-							<h2>CATEGORIA: {move.damage_class.name.toUpperCase()}</h2>
-							<h2>POTENCIA: {move.power ?? "??"}</h2>
-							<h2>PRECISIÓN: {move.accuracy ?? "??"}</h2>
-							<p>{flavorTextEntrie()}</p>
+								<h2>CATEGORIA: {move.damage_class.name.toUpperCase()}</h2>
+								<h2>POTENCIA: {move.power ?? "??"}</h2>
+								<h2>PRECISIÓN: {move.accuracy ?? "??"}</h2>
+								<p>{flavorTextEntrie()}</p>
 							</div>
 						</div>}
 
@@ -73,6 +77,6 @@ export default function MovesWindow({pokemon, moveToLearn, showWindow}){
 													</div> 
 										</div>
 			</div>
-			<button className="heal-button" onClick={()=>showWindow()}>{moveToLearn? "No aprender" : "Volver"}</button>
+			<button className="moves-comeback-button" onClick={()=>showWindow()}>{moveToLearn? "No aprender" : <IoArrowBackOutline />}</button>
 	</div>	
 }

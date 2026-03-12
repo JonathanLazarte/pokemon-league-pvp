@@ -1,59 +1,114 @@
 .list-pokemon {
-	width: 45%;
+	width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    gap: 10px;
+    gap: 2px;
     /*background-color: #0a0a0c; /* Fondo oscuro */
     /*border: 1px solid #c8aa6e; /* Borde dorado */
-    border-radius: 8px; /* Bordes redondeados */
     overflow: scroll;
-    height: 67vh;
-}
-.pokemon-section .list-pokemon{
-    justify-content: flex-start;
-}
-/* Cada ítem de Pokémon */
-.pokemon-item {
-    background-color: rgba(50, 10, 10, 0.3); /* Fondo oscuro */
-    border: 3px solid rgba(50, 10, 10, 1.0); /* Borde dorado */
-    border-radius: 2px; /* Bordes redondeados */
-    padding: 10px;
-    width: 200px; /* Ancho fijo para cada ítem */
-    height: 150px;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Transición suave */
+    height: 100%;
+    padding-top: 2%; /* Bordes ligeramente redondeados, como paneles de LoL */
+    scrollbar-width: none;
 }
 
+.pokemon-section .list-pokemon{
+    justify-content: flex-start;
+    width: 100%;
+}
+
+/* Cada ítem de Pokémon */
+.pokemon-item-border {
+    position: relative;
+ /* Fondo oscuro */
+    background: linear-gradient(to bottom, var(--gold-two), var(--gold-five));
+    border-radius: 5px; /* Bordes redondeados */
+    width: 120px; /* Ancho fijo para cada ítem */
+    height: 120px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición suave */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    clip-path: circle(40%);
+}
+.pokemon-item{
+   background-color: rgba(20, 20, 20, 1.0);
+   clip-path: circle(40%);
+   width: 97%;
+   height: 97%;
+   display: flex;
+}
+.pokemon-item-border:hover{
+    background: linear-gradient(to bottom, var(--gold-one), var(--gold-four));
+}
 /* Efecto hover para los ítems */
 .pokemon-item:hover {
-    background: linear-gradient(transparent, rgba(250, 250, 250, 0.2));
-    border-image: linear-gradient(to bottom, rgb(190, 10, 10), rgb(110, 10, 10)) 1;
+    //background: linear-gradient(transparent, rgba(250, 250, 250, 0.1));
+    border-image: linear-gradient(to bottom, var(--gold-one), var(--gold-three))1;
+    /*border-image: linear-gradient(to bottom, rgb(190, 10, 10), rgb(110, 10, 10)) 1;
      /* Fondo más claro */
     box-shadow: 0 0 10px rgba(200, 170, 110, 0.5); /* Sombra dorada */
+    //filter: brightness(1.2);
 }
 
 /* Estilo para el Pokémon seleccionado */
 .pokemon-item[style*="border"] {
-    border: 2px solid #c8aa6e; /* Borde más grueso */
     background-color: rgba(200, 170, 110, 0.1); /* Fondo dorado sutil */
 }
+.pokemon-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #ff0000 10%, #1a1a1a 70%); /* Fondo con gradiente futurista */
+  border-radius: 50%; /* Forma circular como Poké Ball */
+  border: 2px solid #00ffcc; /* Borde neón cian */
+  box-shadow: 
+    0 0 10px #00ffcc, /* Brillo neón exterior */
+    inset 0 0 8px rgba(0, 255, 204, 0.5); /* Bisel interno holográfico */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
 
+
+.pokemon-item:active {
+  animation: pulse 0.3s ease;
+}
+
+/* Animación de pulso al clic */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px #00ffcc, inset 0 0 8px rgba(0, 255, 204, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px #00ffff, inset 0 0 12px rgba(0, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px #00ffcc, inset 0 0 8px rgba(0, 255, 204, 0.5);
+  }
+}
 /* Contenedor de la imagen y el nombre/nivel */
 .box-1 {
     display: flex;
     align-items: center;
+    align-content: center;
+    justify-content: center;
     gap: 10px;
+    width: 100%;
 }
 
 /* Imagen del Pokémon */
 .box-1 img {
-    width: 50px;
-    height: 50px;
-    filter: drop-shadow(0 0 5px rgba(200, 170, 110, 0.5)); /* Sombra dorada */
-    scale: 1.5;
+    width: 70%;
+    //filter: drop-shadow(0 0 3px rgba(200, 170, 110, 0.5)); /* Sombra dorada */
     margin-top: -30px;
+}
+.name-level{
+    display: none;
 }
 
 /* Nombre y nivel del Pokémon */
@@ -66,12 +121,15 @@
 
 /* Contenedor de la barra de HP */
 .hp-container {
-    margin-top: 10px;
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    width: 90%;
 }
 
 /* Texto de HP */
 .health-count {
-    color: rgba(150, 150, 150, 1.0); /* Texto dorado */
+    color: var(--gold-three); /* Texto dorado */
     font-size: 12px;
     margin: 0;
 }
@@ -80,7 +138,7 @@
 .bar-health {
     width: 100%;
     height: 10px;
-    background-color: #2d2d2d; /* Fondo oscuro */
+    background-color: var(--gold-three); /* Fondo oscuro */
     border: 1px solid rgba(100, 10, 10, 1.0); /* Borde dorado */
     border-radius: 5px; /* Bordes redondeados */
     overflow: hidden;
@@ -88,7 +146,7 @@
 
 /* Color de la barra de HP */
 .bar-health::-webkit-progress-value {
-    background-color: rgba(80, 10, 10, 1.0); /* Color dorado */
+     background-color: var(--gold-three);
     border-radius: 5px; /* Bordes redondeados */
 }
 
@@ -99,23 +157,49 @@
 
 
 @media (max-width: 767px){
-
 	.list-pokemon{
 		width: 100%;
-        padding: 20px;
-		height: 23vh;
+        padding: 0px;
 		grid-gap: 1vh;
 		overflow: scroll;
         flex-direction: column;
 	}
     .pokemon-selection .list-pokemon{
         align-content: center;
+        width: 100%;
     }
-	.pokemon-item .name-level{
+    .explore-room .pokemon-selection .list-pokemon, .pvp-pokemon-selection .list-pokemon {
+        
+    }
+    .explore-room .list-pokemon .pokemon-item, .pvp-pokemon-selection .pokemon-item{
+        width: 100%;
+    }
+    .pokemon-item-border {
+        border: 2px solid var(--gold-four); /* Borde dorado */
+        border-image: linear-gradient(to bottom, var(--gold-two), var(--gold-five))1;
+        //border-image: linear-gradient(to bottom, var(--gold-one), var(--gold-four))1;
+        border-radius: 5px; /* Bordes redondeados */
+        padding: 0px;
+        width: 80px; /* Ancho fijo para cada ítem */
+        height: 80px;
+        cursor: pointer;
+    }
+    .pokemon-item{
+        height: 99.5%;
+        width: 99.5%;
+    }
+	.pokemon-item .name-level h5{
 		font-size: 0.7em;
 	}
 	.hp-container{
 		font-size: 0.6em;
 	}
+    .box-1 {
+        gap: 10px;
+    }
+    .box-1 img{
+        scale: 1;
+        margin-top: -10px;
+    }
 
 }

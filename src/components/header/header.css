@@ -29,6 +29,7 @@
 	padding-right: 300px;
   user-select: none;
   z-index: 5;
+  transition: padding 0.3s;
 }
 
 .header-sections{
@@ -38,7 +39,6 @@
 	justify-content: flex-end;
 	height: 100%;
 	width: 90%;
-  margin-right: 40px;
 }
 
 .header-sections .item{
@@ -72,7 +72,7 @@
   font-size: 14px;
   font-family: Spiegel-Regular;
   white-space: nowrap;
-  z-index: 1;
+  z-index: 7;
 }
 .icon-separator {
   width: 2px;
@@ -137,12 +137,27 @@
     padding-right: 0;
   }
   .header-sections{
-    margin-right: 5px;
+    margin-right: 0px;
+    width: 50%;
   }
   .header-sections .item{
   	width: 12vw;
+    font-size: 20px;
   }
   .account-coins{
     display: none;
+  }
+  .icon-separator {
+    width: 1px;
+    height: 65%;
+  }
+  .header-tooltip{
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: /*991px*/1200px) {
+  .index-header{
+    padding-right: 0px;
   }
 }

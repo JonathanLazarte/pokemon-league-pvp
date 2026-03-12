@@ -7,6 +7,7 @@
 	height: 100%;
 	width: 100%;
 	padding-bottom: 20px;
+	overflow: hidden;
 }
 .room-header{
 	position: absolute;
@@ -44,7 +45,7 @@
 	flex-direction: row;
 	justify-content: space-around;
 	height: 85%;
-	width: 700px;
+	width: 90%;
 }
 
 .room-user{
@@ -87,14 +88,36 @@
 
 @media (max-width: 767px) {
 	.room-header{
-	font-size: 12px;
-	padding-left: 10px;
+		font-size: 12px;
+		padding-left: 10px;
 	}
 	.room-header h3{
 		margin-top: 1%;
+		font-size: 12px;
+		width: 90%;
 	}
 	.header-arrow{
-	margin-right: 20px;
-	width: 50px;
+		margin-right: 10px;
+		width: 40px;
+		font-size: 20px;
+		margin-top: 3px;
+	}
+	.room-header img{
+		width: 25px;
+	}
+	.user-banner{
+		width: 180px;
+	}
+	.user-banner-info-container{
+		top: 20%;
+	}
+	.banner-user-icon{
+		position: relative;
+		width: 195px;
+		display: flex;
+		justify-content: center;
+	}
+	.room-user h2{
+		font-size: 1rem;
 	}
 }

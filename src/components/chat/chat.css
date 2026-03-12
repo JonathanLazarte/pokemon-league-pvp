@@ -1,4 +1,3 @@
-
 .chat{
 	display: flex;
 	flex-direction: column;
@@ -45,4 +44,13 @@
 }
 .input-chat:focus{
 		border-image: linear-gradient(to bottom, var(--gold-two), var(--gold-four), var(--gold-five)) 1;
+}
+
+@media (max-width: 767px){
+	.chat{
+		right: 0px;
+		z-index: 6;
+		width: 300px;
+		height: 60%;
+	}
 }

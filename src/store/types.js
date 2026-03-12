@@ -1,6 +1,0 @@
-export const POKEMON_REQUEST = "POKEMON_REQUEST"
-export const POKEMON_SUCCESS = "POKEMON_SUCCESS"
-export const POKEMON_FAILURE = "POKEMON_FAILURE"
-export const POKEMON_UPDATE  = "POKEMON_UPDATE"
-export const POKEMON_ADD     = "POKEMON_ADD"
-export const ADD_ITEM        = "ADD_ITEM"

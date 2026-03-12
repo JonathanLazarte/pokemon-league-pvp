@@ -1,5 +1,6 @@
 import './rightNav.css'
 import {useState, memo} from 'react'
+import {useLocation} from 'wouter'
 import { BsFillPersonPlusFill, BsClipboardPlusFill, BsSearch, BsTextRight } from "react-icons/bs"
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { IoChatboxSharp } from "react-icons/io5";
@@ -10,6 +11,7 @@ import { VscTriangleRight, VscTriangleDown } from "react-icons/vsc";
 import { IoIosSettings } from "react-icons/io";
 import { FaRegWindowMinimize } from "react-icons/fa";
 import { useSelector } from 'react-redux'
+import { selectUserInterfaceData } from '../../redux/slices/userInterfaceSlice.js'
 
 export const ToolTip = () => {
 		const [windowPosition, setWindowPosition] = useState({ x:0, y:0, width:0, height:0 })
@@ -81,12 +83,13 @@ export const ToolTip = () => {
 		return ({ToolTipElement, handleToolTip, offToolTip})
 }
 
-export default memo(function RightNav({connectedUsers, setShowChat, setSelectedUser, handleEmitGetChat, battleRequest, handleEmitBattleRequest, selectedUser}){
+export default memo(function RightNav({socket, connectedUsers, setShowChat, setSelectedUser, battleRequest, handleEmitBattleRequest, selectedUser, showSideNav, setShowSideNav, setToken}){
 		const [showMenu, setShowMenu] = useState()
 		const [menuPosition, setMenuPosition] = useState({ x:0, y:0 })
-		const userName = localStorage.getItem('userName')
 		const {ToolTipElement, handleToolTip, offToolTip} = ToolTip()
 		const user = useSelector(state => state.user);
+		const [, setLocation] = useLocation()
+		const { userState } = useSelector(selectUserInterfaceData)
 
 		const handleContextMenu = (e)=>{
 	        e.preventDefault();
@@ -120,7 +123,12 @@ export default memo(function RightNav({connectedUsers, setShowChat, setSelectedU
 							<div className="user-level">{user.level}</div>
 						</div>
 						<div className="user-state">
-								<div className="user-options"><MdOutlineQuestionMark className="accountOptionIcon" /><MdMinimize className="accountOptionIcon" /><IoIosSettings className="accountOptionIcon" /><PiXBold className="accountOptionIcon" /></div>
+								<div className="user-options">
+									<MdOutlineQuestionMark className="accountOptionIcon" />
+									<MdMinimize onClick={()=> {setShowChat(false); window.innerWidth < 1200 ? setShowSideNav(false) : null }} className="accountOptionIcon" />
+									<IoIosSettings className="accountOptionIcon" />
+									<PiXBold onClick={()=>{socket.current.disconnect(); localStorage.setItem('token', ''); setToken(); }} className="accountOptionIcon" />
+								</div>
 								{!iconIsInHover && <>
 									<h3 style={{fontSize: "18px"}}>{user.userName}</h3>
 									<div className="user-status" onClick={()=>setUserStatus(prevState=>!prevState)}>
@@ -144,21 +152,22 @@ export default memo(function RightNav({connectedUsers, setShowChat, setSelectedU
 								<VscTriangleRight style={iconStyle} className="triangle"/>
 						   				{folder.name.toUpperCase() + " "}({folder.users.length}/{folder.users.length})
 							</div>
-							<div style={folderStyle}>{folder.users.map(user=>{
-							 	return /* user.userName != userName && */ (
-							 	!battleRequest.find(br=> br.from == user.userName) ? <li onMouseLeave={()=>offToolTip()} onMouseEnter={(e)=>handleToolTip(e, user)} className="user-box" key={user.userName} onClick={(e)=>{setSelectedUser(e.currentTarget.children[1].childNodes[0].childNodes[0].data);setShowChat(true) }}  onContextMenu={handleContextMenu} >
+							<div style={folderStyle}>{folder.users.map(u=>{
+							 	return u.userName != user.userName &&(
+							 	!battleRequest.find(br=> br.from == u.userName) ? <li onMouseLeave={()=>offToolTip()} onMouseEnter={(e)=>handleToolTip(e, u)} className="user-box" key={user.userName} onClick={(e)=>{setSelectedUser(e.currentTarget.children[1].childNodes[0].childNodes[0].data);setShowChat(true) }}  onContextMenu={handleContextMenu} >
 							 			<div className="icon-border mini">
-							 				<img className="user-icon mini" src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/profileicon/${user.profileIcon}.png`}></img>
+							 				<img className="user-icon mini" src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/profileicon/${u.profileIcon}.png`}></img>
 							 				<div className="box-status-icon"/>
 							 			</div>
-										<div className="user-box-data"><h5>{user.userName != userName ? user.userName : "Asmongold21"}</h5><h5 className="right-nav-status">En linea</h5></div>
-							 	</li> : inviteBox(user.userName) ) })}
+										<div className="user-box-data"><h5>{u.userName}</h5><h5 className="right-nav-status">En linea</h5></div>
+							 	</li> : inviteBox(u.userName) ) 
+							})}
 			        		</div>
 					</ul>))
 	  	}
 
 
-	return <div className="right-nav" onClick={()=>setShowMenu(false)}>
+	return <div style={!showSideNav ? {display: 'none'} : null} className="right-nav" onClick={()=>setShowMenu(false)}>
 			<ToolTipElement/>
 			<ProfileBox/>
 			<div className="online-users" >

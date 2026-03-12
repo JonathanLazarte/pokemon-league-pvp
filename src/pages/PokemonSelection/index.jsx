@@ -6,10 +6,11 @@ import react, {useState, useEffect, useRef} from 'react'
 import {io} from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js'
 import { v4 as uuidv4 } from 'uuid';
 import {useSelector} from 'react-redux'
+import { selectUserPokemonData } from '../../redux/slices/userPokemonSlice.js'
 
 
 
-export default function PokemonSelection({socket, roomId, setActualSection}){
+export default function PokemonSelection({socket, roomId}){
     const {VITE_API_URL : API_URL} = import.meta.env;
 	  const [renderData, setRenderData] = useState([])
   	const [renderPokeballsOne, setRenderPokeballsOne] = useState([null,null,null,null,null,null])
@@ -23,7 +24,7 @@ export default function PokemonSelection({socket, roomId, setActualSection}){
   	const [types, setTypes] = useState([])
   	const token = localStorage.getItem('token')
     const userName = localStorage.getItem('userName')
-    const {loading, pokemonStore, error} = useSelector(state => {return state.pokemonReducer})
+    const {loading, userPokemon, error} = useSelector(selectUserPokemonData);
 
     //const socket = s//io(`${API_URL}`,{ auth: {token}})
    
@@ -45,8 +46,8 @@ export default function PokemonSelection({socket, roomId, setActualSection}){
 
 
   const selectPokemon = (pokemonIndex, player)=>{
-  const pokemonIndexInPokemonStore = pokemonStore.findIndex(p=> p.index == pokemonIndex)
-  const pokemon = pokemonStore[pokemonIndexInPokemonStore]
+  const pokemonIndexInPokemonStore = userPokemon.findIndex(p=> p.index == pokemonIndex)
+  const pokemon = userPokemon[pokemonIndexInPokemonStore]
   const renderPokeballs = player == "One" ? renderPokeballsOne : renderPokeballsTwo
   const setRenderPokeballs = player == "One" ? setRenderPokeballsOne : setRenderPokeballsTwo
   //const setPp = player == "One" ? setPpOne : setPpOne
@@ -141,7 +142,6 @@ useEffect(()=>{
 	socket?.current?.on("player-ready",(msg)=>{
 		msg.currentPlayer == "One" ? setIsPlayerOneReady(true) : setIsPlayerTwoReady(true)
 		msg.currentPlayer == "One" ? setRenderPokeballsOne(msg.renderPokeballs) : setRenderPokeballsTwo(msg.renderPokeballs) 
-		console.log(msg)
 	})
 	return () => socket?.current?.off("player-ready")
 	},[isPlayerOneReady, isPlayerTwoReady])
@@ -163,21 +163,20 @@ useEffect(()=>{
 }
 	
 	return <>
-  { !areBothReady && <div className="pokemon-selection">
-    <PokemonList pokemonToRender={pokemonStore} pokeballs={currentPlayer == "One" ? renderPokeballsOne : renderPokeballsTwo} action={selectPokemon} page="Pvp" currentPlayer={currentPlayer}></PokemonList>
+  { !areBothReady && <div className="pvp-pokemon-selection">
+    <div className='pokemon-list-container'><PokemonList pokemonToRender={userPokemon} pokeballs={currentPlayer == "One" ? renderPokeballsOne : renderPokeballsTwo} action={selectPokemon} page="Pvp" currentPlayer={currentPlayer}></PokemonList></div>
     <section className="ready-section">
-    <div className="pokemon-one">
-    {renderSelectedPokemon("One")}
-    </div>
-      <button className="ready-button" onClick={()=>{emitReadyPlayer()}}>{currentPlayer == "One" && isPlayerOneReady ? "Esperando al oponente" : currentPlayer == "Two" && isPlayerTwoReady ? "Esperando al oponente" : "LISTO"}</button>
-    <div className="pokemon-one">
-    {renderSelectedPokemon("Two")}
-    </div> 
+      <div className="pokemon-one">
+      {renderSelectedPokemon("One")}
+      </div>
+      <div className="pokemon-one">
+      {renderSelectedPokemon("Two")}
+      </div> 
     </section>
     <PlayButton type="arenaPokemonSelection" text={currentPlayer == "One" && isPlayerOneReady ? "Esperando..." : currentPlayer == "Two" && isPlayerTwoReady ? "Esperando al oponente" : "LISTO"} okButtonAction={emitReadyPlayer}/>
   	</div> 
   }
-	{ areBothReady && <BattleField roomId={roomId} socket={socket} PLAYER={currentPlayer} P1={renderPokeballsOne} P2={renderPokeballsTwo} TYPES={types} setActualSection={setActualSection}></BattleField>}
+	{ areBothReady && <BattleField roomId={roomId} socket={socket} PLAYER={currentPlayer} P1={renderPokeballsOne} P2={renderPokeballsTwo} TYPES={types} ></BattleField>}
 
   	</>
 }

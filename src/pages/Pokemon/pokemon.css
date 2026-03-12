@@ -5,11 +5,29 @@
 	justify-content: flex-start;
 	height: 90%;
 	width: 100%;
-	padding: 50px;
+	padding: 60px;
 	padding-right: 0px;
 }
-
+.pokemon-list-container{
+	width: 35%;
+	height: 90%;
+	align-items: center;
+	//overflow-y: auto; /* Scroll si hay muchos Pokémon */
+  	//scrollbar-width: thin; /* Estilo de scrollbar moderno */
+  	//scrollbar-color: #00ffcc #1a1a1a;
+  	overflow: scroll;
+  	border-bottom: 1px solid var(--gold-five); 
+}
+.list-tittle{
+    border-bottom: 1px solid var(--gold-five);
+    width: 90%;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    height: 40px;
+    padding-left: 2px;
+}
 .pokemon-info{
+	//font-family: 'Orbitron', sans-serif;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -50,7 +68,6 @@
 	margin-left: -20px;
 	border-bottom: 1px solid lightgoldenrodyellow;
 	width: 80%;
-	height: 40px;
 	white-space: nowrap;
 }
 .stat{
@@ -80,27 +97,28 @@
 	margin-top: 30px;
 }
 .heal-button{
-	background: linear-gradient(rgba(40, 20, 20, 1.0), rgba(50, 30, 30, 0.5));
-	//background: linear-gradient(transparent, rgba(250, 210, 120, 0.1), rgba(250, 210, 120, 0.1), rgba(250, 210, 120, 0.1), rgba(250, 210, 120, 0.1));
-    border: 1px solid var(--color-primary); /* Borde dorado */
-    border-bottom: 2px solid rgba(250, 200, 130, 0.7);
+	background: linear-gradient(rgba(40, 20, 20, 0.1), rgba(40, 20, 20, 0.4));
+    border: 1px solid var(--gold-one); /* Borde dorado */
     color: darkgray; /* Texto dorado */
     /*font-family: 'Montserrat', sans-serif; /* Fuente moderna */
-    font-size: 11px; /* Tamaño de fuente */
+    font-size: 1rem; /* Tamaño de fuente */
     text-transform: uppercase; /* Texto en mayúsculas */
     cursor: pointer; /* Cursor de puntero */
-    box-shadow: 0 0 5px rgba(200, 170, 110, 0.5); /* Sombra dorada */
-    transition: all 0.3s ease; /* Transición suave */
+    box-shadow: 0 0 3px rgba(200, 170, 110, 0.5); /* Sombra dorada */
+    transition: all 0.2s ease; /* Transición suave */
     position: relative;
     overflow: hidden;
     margin-right: 10px;
-    border-image: linear-gradient(to bottom, #C8AA6E, #785A28) 1;
-    height: 35px;
-    padding-right: 15px;
-    padding-left: 15px;
+    border-image: linear-gradient(to bottom, var(--gold-two), var(--gold-three), var(--gold-five)) 1;
+    height: 40px;
+    width: 40px;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
 }
 .heal-button:hover{
-	background: linear-gradient(transparent, rgba(250, 210, 120, 0.1), rgba(250, 210, 120, 0.2), rgba(250, 210, 120, 0.3), rgba(250, 210, 120, 0.4));
+	//background: linear-gradient(transparent, rgba(250, 210, 120, 0.1), rgba(250, 210, 120, 0.2), rgba(250, 210, 120, 0.3), rgba(250, 210, 120, 0.4));
 	color: var(--secundary-color);
 	border: 1px solid var(--color-secundary);
 	filter: brightness(1.1);
@@ -108,18 +126,25 @@
 .consume-items{
 	height: 75%;
 	overflow: scroll;
+	align-content: flex-end;
+	align-items: flex-end;
+	justify-content: flex-end;
+	display: flex;
+	flex-direction: column;
 }
 .consume-items .item-button{
 	height: 60px;
+	width: 50%;
 	border: 1px;
 	font-size: 0.8em;
 	color: white;
 	background-color: transparent;
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 }
 .consume-items .item-button:hover{
-	background-color: rgba(255, 255, 255, 0.03);
+	background-color: rgba(255, 255, 255, 0.02);
 }
 
 
@@ -131,26 +156,45 @@
 @media (max-width: 767px){
 
 	.pokemon-section{
-		height: 81vh;
+		height: 91%;
 		flex-direction: column-reverse;
 		padding: 2vw;
 		padding-top: 0;
 		align-items: center;
+		justify-content: space-between;
+		padding-top: 50px;
+	}
+	.list-tittle{
+		margin-bottom: 5px;
+		font-size: 1rem;
+		height: 35px;
+	}
+	.pokemon-list-container{
+		width: 100%;
+		height: 50%;
 	}
 	.pokemon-info{
-		height: 56vh;
+		height: 80%;
 		width: 100%;
 		padding: 1vw;
-		justify-content: space-between;
+		justify-content: flex-start;
 	}
 	.pokemon-details{
-		height: 80%;
+		height: auto;
+		margin-bottom: 10px;
 	}
 	.pokemon-stats{
-		height: 100%;
+		
+	}
+	.pokemon-stats h2{
+		height: 32px;
+	}
+	.pokemon-stats span{
+		font-size: 12px;
 	}
 	.bottom-box{
-		padding: 3vw;
+		padding: 0;
+		padding-left: 20px;
 		height: 20%;
 	}
 	.pokemon-actions{
@@ -162,8 +206,7 @@
 		justify-content: flex-start;
 	}
 	.heal-button{
-		height: 4vh;
-		font-size: 1.1em;
+		margin-right: 7px;
 	}
 	.consume-items {
 		display: grid;

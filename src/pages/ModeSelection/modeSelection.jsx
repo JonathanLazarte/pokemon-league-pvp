@@ -14,12 +14,12 @@ export default memo(function ModeSelection({socket, setActualSection, connectedU
   	
 
   	const handleSound = (sound) => {
-      const confirmButtonClick = new Audio('/assets/sounds/confirm-button-click.mp3');
-      const confirmButtonHover = new Audio('/assets/sounds/confirm-button-Hover.mp3');
-      const confirmButtonCancelClick = new Audio('/assets/sounds/confirm-button-cancel-click.mp3');
-      const findMatchButtonClick = new Audio('/assets/sounds/find-match-button-click.mp3');
-      const findMatchButtonHover = new Audio('/assets/sounds/find-match-button-Hover.mp3');
-      const menuClick = new Audio('https://github.com/jonylazarte/resources/raw/refs/heads/main/general/menu-click.mp3')
+      const confirmButtonClick = new Audio('/general/confirm-button-click.mp3');
+      const confirmButtonHover = new Audio('general/confirm-button-Hover.mp3');
+      const confirmButtonCancelClick = new Audio('general/confirm-button-cancel-click.mp3');
+      const findMatchButtonClick = new Audio('/general/find-match-button-click.mp3');
+      const findMatchButtonHover = new Audio('/general/find-match-button-Hover.mp3');
+      const menuClick = new Audio('/general/menu-click.mp3')
 
       sound == "confirm-button-click" && confirmButtonClick.play();
       sound == "confirm-button-hover" && confirmButtonHover.play();
@@ -54,7 +54,7 @@ export default memo(function ModeSelection({socket, setActualSection, connectedU
   	const GameMode = ({name, hoverImg, enabledImg, disabledImg, subTitle, title, description, queue}) => {
   		return <>
   			<div className="gamemode-icons">
-			<div className="gamemode-icon"  onMouseEnter={()=>setModeInHover(name)} onMouseLeave={()=>setModeInHover("")}>
+			<div className="gamemode-icon"  /*onMouseEnter={()=>setModeInHover(name)}*/ onMouseLeave={()=>setModeInHover("")}>
 				<img src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/${modeInHover == name ? hoverImg : mapSelected == name ? enabledImg : disabledImg}`} />
 				<h3>{subTitle}</h3>
 				<h1>{title}</h1>

@@ -36,12 +36,17 @@ const userSlice = createSlice({
       state.profileIcon = action.payload.profileIcon;
       state.background = action.payload.profileIcon;
       state.rank = action.payload.rank;
+      state.messages = action.payload.messages;
     },
     updateUser: (state, action) => {
       // Aquí puedes añadir reducers para actualizar otros campos del usuario
       // Por ejemplo:
       // state.level = action.payload.level;
       // state.EXP = action.payload.EXP;
+    },
+    setUserMessages: (state, action) => {
+      const newMessages = [...state.messages, action.payload];
+      state.messages = newMessages;
     },
     updateCoins: (state, action) => {
       state.RP = action.payload.coin == "RP" ? state.RP - action.payload.price : state.RP;
@@ -50,5 +55,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, updateUser, updateCoins } = userSlice.actions;
+export const { setUser, updateUser, setUserMessages, updateCoins } = userSlice.actions;
 export default userSlice.reducer;

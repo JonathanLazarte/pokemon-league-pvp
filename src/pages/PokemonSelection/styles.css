@@ -1,16 +1,17 @@
-.pokemon-selection{
+.pvp-pokemon-selection{
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between!important;
   align-items: center;
-  margin: auto;
-  height: 90%;
-  width: 70%;
-  //text-shadow:-0.222rem -0.222rem 0 #1F2937,0.222rem -0.222rem 0 #1F2937,-0.222rem 0.222rem 0 #1F2937,0.222rem 0.222rem 0 #1F2937,-0.111rem -0.222rem 0 #1F2937,0.111rem -0.222rem 0 #1F2937,-0.111rem 0.222rem 0 #1F2937,0.111rem 0.222rem 0 #1F2937,-0.222rem -0.111rem 0 #1F2937,0.222rem -0.111rem 0 #1F2937,-0.222rem 0.111rem 0 #1F2937,0.222rem 0.111rem 0 #1F2937,0.111rem 0.444rem 0 #1F2937,0.222rem 0.444rem 0 #1F2937,0.333rem 0.444rem 0 #1F2937,0.444rem 0.444rem 0 #1F2937,0.444rem 0.333rem 0 #1F2937,0.444rem 0.222rem 0 #1F2937,0.444rem 0.111rem 0 #1F2937;
-  padding-top: 5%;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  padding-top: 20px;
+} 
+.pvp-pokemon-selection .pokemon-list-container{
+  height: 50%;
+  width: 80%;
 }
-
-
 
 .ready-section{
   display: flex;
@@ -20,17 +21,19 @@
   align-content: center;
   place-items: center;
   width: 45%;
-  height: 65%;
+  height: 30%;
 }
-
+.pokemon-view {
+  width: 17%;
+}
 .pokemon-view img{
-     width: 70%;
+     width: 90%;
 }
 
 .pokemon-one{
-   display: flex;
+  display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 90%;
 }
 .ready-button{
   margin-top: 15px;
@@ -56,9 +59,14 @@
   .pokemon-selection{
     flex-direction: column!important;
     padding-top: 1vh;
+    margin: 0px;
   }
-
+  .pvp-pokemon-selection .pokemon-list-container{
+    height: 50%;
+    width: 80%;
+  }
   .ready-section{
     width: 100%;
+    height:  30%;
   }
 }

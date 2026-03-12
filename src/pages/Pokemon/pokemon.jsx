@@ -1,9 +1,15 @@
 import './pokemon.css'
 import {useState, useEffect, memo} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {consumeItem, sellPokemon} from '../../store/actions/pokemonActions.js'
+import { selectUserPokemonData, updatePokemon, sellPokemon } from '../../redux/slices/userPokemonSlice.js'
+import { selectUserItemsData, consumeItem } from '../../redux/slices/userItemsSlice.js'
 import PokemonList from '../../components/pokemonList/pokemonList.jsx'
 import MovesWindow from '../../components/pokemonMoves/pokemonMoves.jsx'
+import { RiTempColdFill } from "react-icons/ri";
+import { LuSwords } from "react-icons/lu";
+import { PiHandCoins } from "react-icons/pi";
+import { IoArrowBackOutline } from "react-icons/io5";
+import {Riple} from 'react-loading-indicators'
 
 
 export default memo(function Pokemon({}){
@@ -13,28 +19,62 @@ export default memo(function Pokemon({}){
 	//const [pokemon, setPokemon] = useState();
 	const [selectedAction, setSelectedAction] = useState()
 	const [selectedPokemon, setSelectedPokemon] = useState(0)
-	const {loading, pokemonStore, items, error} = useSelector(state => {return state.pokemonReducer})
-	const [renderData, setRenderData] = useState(pokemonStore[0]);
+	const {loading, userPokemon, error} = useSelector(selectUserPokemonData);
+    const {userItems : items} = useSelector(selectUserItemsData);
+	const [renderData, setRenderData] = useState(userPokemon[0]);
 
 	useEffect(()=>{
 
-		pokemonStore[selectedPokemon]? setRenderData(pokemonStore[selectedPokemon]) : setRenderData()
+		userPokemon[selectedPokemon]? setRenderData(userPokemon[selectedPokemon]) : setRenderData()
 
-  	},[selectedPokemon, pokemonStore]) 
+  	},[selectedPokemon, userPokemon]) 
 
+    const consumeItem = ({itemId, pokemonIndex}) => {
+        var pokeballsState = undefined
+        switch (itemId) {
+        case 23:
+          pokeballsState = {index: pokemonIndex, hp: undefined}
+          break;
+        case 45:
+          pokeballsState = {index: pokemonIndex, hp_effort: 50}
+          break;
+        case 46:
+          pokeballsState = {index: pokemonIndex, attack_effort: 50}
+          break;
+        case 47:
+          pokeballsState = {index: pokemonIndex, defense_effort: 50}
+          break;
+        case 48:
+          pokeballsState = {index: pokemonIndex, special_attack_effort: 50}
+          break;
+        case 49:
+          pokeballsState = {index: pokemonIndex, special_defense_effort: 50}
+          break;
+        case 52:
+          pokeballsState = {index: pokemonIndex, speed_effort: 50}
+          break;
+        default:
+          //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
+          break;
+      }
+      pokeballsState ? dispatch(updatePokemon(pokeballsState)) : console.log('Item no contemplado')
+    }
 
 
 	return <section className="pokemon-section">
-    {!loading && pokemonStore ? (
+    <div className="pokemon-list-container">
+        <div className="list-tittle">Colección</div>
+        {!loading /*&& pokemonStore.length > 0*/ ? (
         <PokemonList
-            pokemonToRender={pokemonStore}
+            pokemonToRender={userPokemon}
             action={setSelectedPokemon}
             actualPokemonSelected={renderData}
             page="Bag"
         />
-    ) : (
-        <div>Cargando...</div>
-    )}
+        ) : (  <div style={{width: "100%", height: "100%", alignContent: "center", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                    <Riple color="var(--gold-one)" size="small" text="" textColor="" />
+            </div> )}
+    </div>
 
     <div className="pokemon-info">
         {selectedAction == "Moves" && (
@@ -54,14 +94,14 @@ export default memo(function Pokemon({}){
                     />
                     <div className="pokemon-stats">
                         <h2>{renderData?.name.toUpperCase()}</h2>
-                        <div className="stat"><span>Nivel</span><span>{renderData?.level}</span></div>
+                        <div className="stat"><span>Level</span><span>{renderData?.level}</span></div>
                         <br/>
                         <div className="stat"><span>HP</span><span>{renderData?.stats[0].actual_stat}</span></div>
-                        <div className="stat"><span>Attack</span><span>{renderData?.stats[1].actual_stat}</span></div>
-                        <div className="stat"><span>Defense</span><span>{renderData?.stats[2].actual_stat}</span></div>
-                        <div className="stat"><span>Special Attack</span><span>{renderData?.stats[3].actual_stat}</span></div>
-                        <div className="stat"><span>Special Defense</span><span>{renderData?.stats[4].actual_stat}</span></div>
-                        <div className="stat"><span>Speed</span><span>{renderData?.stats[5].actual_stat}</span></div>
+                        <div className="stat"><span>ATK</span><span>{renderData?.stats[1].actual_stat}</span></div>
+                        <div className="stat"><span>DEF</span><span>{renderData?.stats[2].actual_stat}</span></div>
+                        <div className="stat"><span>SP ATK</span><span>{renderData?.stats[3].actual_stat}</span></div>
+                        <div className="stat"><span>SP DEF</span><span>{renderData?.stats[4].actual_stat}</span></div>
+                        <div className="stat"><span>SPD</span><span>{renderData?.stats[5].actual_stat}</span></div>
                     </div>
                 </div>
                 <div className="bottom-box">
@@ -79,7 +119,7 @@ export default memo(function Pokemon({}){
                                             <button
                                                 className="item-button"
                                                 onClick={() =>
-                                                    dispatch(consumeItem(item.id, renderData.index))
+                                                    consumeItem({itemId: item.id, pokemonIndex: renderData.index})
                                                 }
                                                 key={item.id}
                                             >
@@ -96,19 +136,19 @@ export default memo(function Pokemon({}){
                                         className="heal-button"
                                         onClick={() => setSelectedAction("ConsumeItems")}
                                     >
-                                        CONSUMIBLES
+                                        <RiTempColdFill />
                                     </button>
                                     <button
                                         className="heal-button"
                                         onClick={() => setSelectedAction("Moves")}
                                     >
-                                        MOVIMIENTOS
+                                        <LuSwords />
                                     </button>
                                     <button
                                         className="heal-button"
-                                        onClick={() => dispatch(sellPokemon(renderData.index))}
+                                        onClick={() => dispatch(sellPokemon({pokemonId: renderData.index}))}
                                     >
-                                        VENDER
+                                        <PiHandCoins />
                                     </button>
                                 </>
                             ) : (
@@ -116,7 +156,7 @@ export default memo(function Pokemon({}){
                                     className="heal-button"
                                     onClick={() => setSelectedAction()}
                                 >
-                                    Back
+                                    <IoArrowBackOutline />
                                 </button>
                             )}
                         </div>

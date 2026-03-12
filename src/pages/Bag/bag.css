@@ -36,6 +36,7 @@
 @media (max-width: 767px){
 
     .bag-header{
-        padding-left: 4vw;
+        padding-left: 20px;
+        height: 8%;
     }
 }

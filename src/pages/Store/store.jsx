@@ -5,7 +5,7 @@ import './store.css'
 
 
 
-export default function Store({userItems}){
+export default function Store({}){
 	const [actualSection, setActualSection] = useState("Pokemon")
 	const buttonPokemon = actualSection == "Pokemon" ? {borderBottom:"2px solid #CDBE91 ", color:"#F0E6D2"} : null
     const buttonPokedex = actualSection == "Items" ? {borderBottom:"2px solid #CDBE91 ", color:"#F0E6D2"} : null
@@ -17,9 +17,8 @@ export default function Store({userItems}){
 			<div style={buttonPokemon} className="subheader-item" onClick={()=>setActualSection("Pokemon")}>POKEMON</div>
 			<div style={buttonPokedex} className="subheader-item" onClick={()=>setActualSection("Items")}>ITEMS</div></header>
 
-
 			{actualSection == "Pokemon" && <PokemonShop/>}
-			{actualSection == "Items" && <ItemsShop userItems={userItems}/>}
+			{actualSection == "Items" && <ItemsShop/>}
 		</section>
 	)
 }

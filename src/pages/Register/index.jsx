@@ -5,13 +5,12 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/slices/userSlice.js';
+import { FaArrowRight } from "react-icons/fa";
 
-export default function Login(){
+export default function Register({setToken}){
 	const {VITE_API_URL : API_URL} = import.meta.env;
-	const [userName, setUserName] = useState()
-	const [password, setPassword] = useState()
-	const [actualSection, setActualSection] = useState("Login")
-	const [areInputsEmpty, setAreImputsEmpty] = useState(true)
+	const [clickedButton, setClickedButton] = useState(false)
+	const [errorMessage, setErrorMessage] = useState()
 	const [path, setLocation] = useLocation();
 	const dispatch = useDispatch();
 	const initialValues = {
@@ -27,6 +26,7 @@ export default function Login(){
 
 	const onSubmit = (e)=>{
 		e.preventDefault;
+		setClickedButton(true)
 		const body = {
 			userName : values.userName,
 			password : values.password,
@@ -37,7 +37,7 @@ export default function Login(){
 			pokemon : [],
 			items : [],
 			messages: [
-				{
+				/*{
 					to: values.userName,
 					from: "ShakaDev",
 					message: `Hola ${values.userName}! te doy la bienvenida a Pokemon League`
@@ -46,7 +46,7 @@ export default function Login(){
 					to: values.userName,
 					from: "ShakaDev",
 					message: `Podes usar este chat para dejar cualquier sugerencia, opinión o pregunta :)`
-				}
+				}*/
 			],
 			level: 1,
 			EXP: 0,
@@ -63,11 +63,11 @@ export default function Login(){
 		fetch(`${API_URL}pokemons/users/register`,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}).then(response=>response.json()).then(data=>{
 			if(!data.message){
 			localStorage.setItem('token', (data.id));
-			localStorage.setItem('userName', (data.userName));
-			console.log(data);
+			setToken(data.id);
 			dispatch(setUser(data)) 
 			setLocation('/') } else {
-				alert("Usuario actualmente registrado")
+				setErrorMessage("Usuario actualmente registrado.")
+				setClickedButton(false)
 			}  
 		})
 	}
@@ -100,25 +100,29 @@ export default function Login(){
 
 	return <div className="main-menu">
     <form onSubmit={handleSubmit}className="login-form">
-    <h2>Pokemon League</h2>
+    <h2>Registrarse</h2>
+    {!clickedButton ? <><div className="error-box">{errorMessage ? errorMessage : null}</div>
     	<input
-    	 className="input-div"
+    	 className={`input-div ${errorMessage ? 'errorMessage' : null}`}
     	 type="text"
     	 name="userName"
     	 placeholder="Nombre de usuario"
          onBlur={handleBlur}
     	 onChange={handleChange}></input>
-         {errors.userName && touched.userName && <div>{errors.userName}</div>}
+         {/*errors.userName && touched.userName && <span className="inputError">{errors.userName}</span>*/}
     	<input
-    	 className="input-div"
+    	 className={`input-div ${errorMessage ? 'errorMessage' : null}`}
     	 type="password"
     	 name="password"
     	 placeholder="Contraseña"
          onBlur={handleBlur}
     	 onChange={handleChange}></input>
-         {errors.password && touched.password && <div>{errors.password}</div>}
-    	<div><a onClick={()=>setLocation('/Login')}>Ya tengo una cuenta</a><button className="login-button" type="submit">Registrarse</button></div>
-        {/*<Link preload="true" to ="/Register">Registrarse</Link>*/}
+         {/*errors.password && touched.password && <span className="inputError">{errors.password}</span>*/}
+		<div className="actions-box">
+    		<button disabled={!values.password || !values.userName} className={`login-button ${ (!values.userName || !values.password) ? 'disabled' : null }`} type="submit"><FaArrowRight /></button>
+    		<a onClick={()=>setLocation('/Login')}>Ya tienes una cuenta?</a>
+    	</div> </>
+    	: <svg style={{height: "45px", width: "45px"}} fill="hsl(228, 97%, 42%)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"><animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/></path></svg>}
     </form>
     </div>
 }

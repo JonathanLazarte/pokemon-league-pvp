@@ -1,9 +1,10 @@
 import {useState, useEffect, memo} from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { v4 as uuidv4 } from 'uuid';
 import './styles.css';
 import PlayButton from '../../components/playButton/playButton.jsx'
 import { MdArrowBackIos } from "react-icons/md";
+import { setUserState } from '../../redux/slices/userInterfaceSlice.js'
 
 
 
@@ -12,8 +13,9 @@ export default memo(function({socket, setActualSection, connectedUsers, setGloba
 	const [createdRoom, setCreatedRoom] = useState()
 	const [roomId, setRoomId] = useState()
 	const newRoom = uuidv4()
-    const userName = localStorage.getItem("userName");
     const user = useSelector(state => state.user);
+    const userName = user.userName;
+    const dispatch = useDispatch()
 
     /*useEffect(()=>{
         const lobbyIntro = new Audio('./assets/sounds/lobby-intro.mp3')
@@ -41,7 +43,9 @@ export default memo(function({socket, setActualSection, connectedUsers, setGloba
       	const currentPlayer = indexRoom == 0 ? "One" : "Two"
       	localStorage.setItem('currentPlayer', currentPlayer)
         localStorage.setItem('roomId', roomId)
-        if(room.length == "2"){socket.current.emit('start-match', ({roomId}))}
+        if(room.length == "2"){
+            socket.current.emit('start-match', ({roomId}))
+        }
     	})
         return ()=> socket?.current?.off('USER JOINED')
     },[]) 
@@ -64,35 +68,35 @@ export default memo(function({socket, setActualSection, connectedUsers, setGloba
     },[])
 
 	return <section className="pvp-room">
-            <div className='room-header'><MdArrowBackIos onClick={()=>setGlobalRoom("")} className="header-arrow" /><img src='https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/mini-sr.png'/><h3>GL · CLASIFICATORIA SOLO · RECLUTAMIENTO</h3></div>
+            <div className='room-header'><MdArrowBackIos onClick={()=>{ dispatch(setUserState('Online')); setGlobalRoom();}} className="header-arrow" /><img src='https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/mini-sr.png'/><h3>GL · CLASIFICATORIA SOLO · RECLUTAMIENTO</h3></div>
 		   		<div className="room-users">
                     <div className="room-user">
-                        <img className="user-banner" src="https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/banner.png"/>
+                        <img className="user-banner" src="/general/banner.png"/>
                         <div className="user-banner-info-container">
                             <div className="banner-user-icon">
-                                <img className="banner-user-border" src="https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/EoG_Border_150_4k.png"/>
+                                <img className="banner-user-border" src="/general/EoG_Border_150_4k.png"/>
                                 <img className="banner-user-icon-img" src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/profileicon/${user.profileIcon}.png`}></img>
                             </div>
                             <h2>{user.alias}</h2>
                             <span>{user.title}</span> 
                         </div>
                     </div>
-                    {roomUsers?.map((roomUserId, index)=>{
+                    {/*roomUsers?.map((roomUserId, index)=>{
                     const roomUser = connectedUsers?.find(cu => cu.socketID == roomUserId)
                     return <div className="room-user">
-                        <img className="user-banner" src="https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/banner.png"/>
+                        <img className="user-banner" src="/general/banner.png"/>
                         <div className="user-banner-info-container">
                             <div className="banner-user-icon">
-                                <img className="banner-user-border" src="https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/general/EoG_Border_150_4k.png"/>
+                                <img className="banner-user-border" src="/general/EoG_Border_150_4k.png"/>
                                 <img className="banner-user-icon-img" src={`https://raw.githubusercontent.com/jonylazarte/resources/refs/heads/main/profileicon/${roomUser?.profileIcon}.png`}></img>
                             </div>
-                            <h2>{roomUser.userName}</h2>
-                            <span>{roomUsers.title}</span> 
+                            <h2></h2>
+                            <span></span> 
                         </div>
                     </div>
                     })
-                    }
+                    */}
 		  		</div>
-		   	<PlayButton type={"pvp-room"} text={"BUSCAR PARTIDA"} socket={socket} setRoomId={setRoomId} setGlobalRoom={setGlobalRoom} setActualSection={setActualSection} ></PlayButton>
+		   	<PlayButton type={"pvp-room"} text={"BUSCAR PARTIDA"} socket={socket} setRoomId={setRoomId} setGlobalRoom={setGlobalRoom}  ></PlayButton>
    		</section>
 })

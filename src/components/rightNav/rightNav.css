@@ -7,10 +7,9 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
-		z-index: 5;
+		z-index: 7;
 		color: #9C9889;
 		border-top: 2px solid rgb(120, 90, 40);
-
 }
 .social-menu{
 		display: flex;
@@ -58,7 +57,7 @@
 		display: flex;
 		height: 11.3vh;
 		padding-left: 15px; 
-		border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+		border-bottom: 1px solid rgba(200, 200, 200, 0.05);
 		//border-bottom: 1px solid rgba(150, 100, 0, 0.3);
 		text-align: left;
 		justify-content: flex-start;
@@ -68,12 +67,11 @@
 }
 
 .userLevelBarContainer{
-	scale: 0.99;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 81px;
-		width: 81px;
+		height: 80px;
+		width: 80px;
 		background-color: white;
 		margin-right: 14px;
 		cursor: pointer;
@@ -85,8 +83,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 76px;
-		width: 76px;
+		height: 95%;
+		width: 95%;
 		background-color: black;
 		clip-path: circle(50% at 50% 50%);
 		background: linear-gradient(to right, darkred, darkred, darkred, black, black);
@@ -97,8 +95,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;	
-		height: 67px;
-		width: 67px;
+		height: 89%;
+		width: 89%;
 		border-radius: 50%;
 		background: linear-gradient(to bottom, var(--gold-two), var(--gold-five), var(--gold-five), var(--gold-four));
 }
@@ -113,8 +111,8 @@
 }
 
 .user-icon{
-	 	height: 63px;
-	 	width: 63px;
+	 	height: 95%;
+	 	width: 95%;
 	  border-radius: 50%;
 	  background-color: black;
 }
@@ -122,18 +120,20 @@
 
 		background-color: black;
 		border: 2px solid var(--gold-five);
-		border-bottom-left-radius: 15px;
-		border-bottom-right-radius: 15px;
+		border-image: linear-gradient(to bottom. var(--gold-two), var(--gold-five));
+		border-bottom-left-radius: 10px;
+		border-bottom-right-radius: 10px;
 		border-top-left-radius: 15px;
 		border-top-right-radius: 15px;
 		position: absolute;
-		bottom: -5px;
-		height: 20px;
-		width: 42px;
+		bottom: -3px;
+		height: 22%;
+		width: 38%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		color: darkgray;
+		font-size: 0.8em;
 
 }
 
@@ -423,6 +423,13 @@ h4{
 
 @media (max-width: 767px) {
   .right-nav{
+  	z-index: 5;
+  }
+  .right-nav-user-tooltip{
   	display: none;
+  }
+  .userLevelBarContainer{
+  	height: 70px;
+  	width: 70px;
   }
 }

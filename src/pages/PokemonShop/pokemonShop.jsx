@@ -2,76 +2,15 @@ import './pokemonShop.css'
 import {react, useState, useEffect, memo, useRef} from 'react'
 import Card from '../../components/cards/pokeCard.jsx'
 import {useSelector, useDispatch} from 'react-redux'
-import {getPokemon, addPokemon} from '../../store/actions/pokemonActions.js';
+import { selectUserPokemonData } from '../../redux/slices/userPokemonSlice.js';
 import {useLocation} from 'wouter'
 import { BsSearch } from "react-icons/bs"
 import { FaCheck } from "react-icons/fa6";
-import { GiDoubled, GiDividedSquare } from "react-icons/gi";
 import UseNearScreen from '../../services/UseNearScreen.js'
-import '../../components/confirmPurchaseWindow/confirmPurchaseWindow.css'
+import ConfirmPurchaseWindow from '../../components/confirmPurchaseWindow/confirmPurchaseWindow.jsx'
 import { updateCoins } from '../../redux/slices/userSlice.js'
 
-export const ConfirmPurchaseWindow = () => {
-    const {VITE_API_URL : API_URL} = import.meta.env;
-    const token = localStorage.getItem('token')
-    const dispatch = useDispatch()
-    const [showWindow, setShowWindow] = useState();
-    const [productInfo, setProductInfo] = useState();
-    const user = useSelector(state => state.user)
 
-    const addToPokedex = (coin, price) => {
-        fetch(`${API_URL}pokemons/users/addpokemon`,{
-            method:'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                userID : token,
-                pokemonID : productInfo.productID,
-                pokemonName : ""/*window.prompt("Nombra a tu pokemon")*/,
-                coin,
-                price
-            }),
-        }).then(response =>response.json()).then(data => dispatch(addPokemon(data)) && /*,*/ setShowWindow(false), dispatch(updateCoins({coin, price})) )
-    };
-    const PurchaseWindow = () => {
-        const productPrice = {rp: 350, be: 2000} 
-        const newBalance = {rp: user.RP - productPrice.rp, be: user.BE - productPrice.be}
-        const RPButtonStyle = user.RP - 350 >= 0 ? null : {filter: "grayscale(0.5)", cursor: "default"};
-        const BEButtonStyle = user.BE - 2000 >= 0 ? null : {filter: "grayscale(0.5)", cursor: "default"};
-        return (
-            showWindow ? <div className="confirm-purchase-screen">
-                <div style={{backgroundImage: `url('${productInfo.productImg}')`, backgroundRepeat: "no-repeat", backgroundSize: "contain", backgroundPositionY: "-90px", backgroundPositionX: "center"}}  className="confirm-purchase-window">
-                    <div className="confirm-purchase-window-content">
-                        <div className="exit-button"><button onClick={()=>setShowWindow(false)}>X</button></div> 
-                        <div className="product-title">
-                            <h2 className="product-name">{productInfo?.name?.toUpperCase()}</h2>
-                            <span>¡Agrega este pokemon a tu alineación!</span> 
-                        </div>
-                        <div className="product-buy-buttons">
-                            <div onClick={()=>{user.RP - 350 >= 0 ? addToPokedex("RP", 350) : null}} style={RPButtonStyle} className="buy-rp-button">
-                                <GiDividedSquare className="rp-icon" fontSize="25px" color="gold" />
-                                {productPrice.rp}
-                                {newBalance.rp >= 0 ? <span className="new-balance">nuevo saldo: {user.RP - 350}</span> : <span className="new-balance" style={{color: "red"}}>Saldo insuficiente</span>}
-                            </div>
-                            <div onClick={()=>{user.BE - 2000 >= 0 ? addToPokedex("BE", 2000) : null}} style={BEButtonStyle} className="buy-be-button">
-                                <GiDoubled className="be-icon" fontSize="25px" color="0ACBE6" />
-                                {productPrice.be}
-                                {newBalance.be >= 0 ? <span className="new-balance">nuevo saldo: {user.BE - 2000}</span> : <span className="new-balance" style={{color: "red"}}>Saldo insuficiente</span>}
-                            </div>
-                        </div> 
-                    </div>       
-                </div>
-            </div> : null
-        )
-    }
-    const activeWindow = (product) => {
-        const productID = (product.url?.split("/")[4])
-        const productImg = `./assets/images/pokemon/${productID}.png`
-        setShowWindow(true)
-        setProductInfo({...product, productImg, productID})
-        console.log(productImg)
-    }
-    return ({PurchaseWindow, activeWindow})
-}
 
 export default memo(function PokemonShop(){
     const {VITE_API_URL : API_URL} = import.meta.env;
@@ -79,7 +18,7 @@ export default memo(function PokemonShop(){
 	const [pokemon, setPokemon] = useState([]);
 	const [renderData, setRenderData] = useState([]) 
 	const [searchKeys, setSearchKeys] = useState()
-	const {loading, pokemonStore, error} = useSelector(state => {return state.pokemonReducer})
+	const {loading, userPokemon, error} = useSelector(selectUserPokemonData);
     const [types, setTypes] = useState()
     const [typeSelected, setTypeSelected] = useState()
     const [generations, setGenerations] = useState()
@@ -92,7 +31,7 @@ export default memo(function PokemonShop(){
     const externalRef = useRef()
     const {isNearScreen} = UseNearScreen({externalRef: loading ? null : externalRef, once: false})
     const [page, setPage] = useState(0)
-    const {PurchaseWindow, activeWindow} = ConfirmPurchaseWindow()
+    const {PurchaseWindow, activeWindow} = ConfirmPurchaseWindow("pokemon")
     const generationNames = [
         {
             "name": "Generation I",
@@ -249,10 +188,10 @@ export default memo(function PokemonShop(){
         const gen = generationSelected && generations[generationSelected]   
 
         const pokemonFiltered = pokemon.filter(poke =>{
-            const typeFilter = typeSelected ? type.some(pokemon => pokemon.pokemon.name == poke.name) && type2?.some(pokemon => pokemon.pokemon.name == poke.name) : true;
+            const typeFilter = typeSelected ? type.some(pokemon => pokemon.pokemon.name == poke.name) /* && type2?.some(pokemon => pokemon.pokemon.name == poke.name) */ : true;
             const generationFilter = generationSelected ? gen['pokemon_species'].some(pokemon => pokemon.name == poke.name) : true;
             const keyFilter = searchKeys ? poke.name.startsWith(searchKeys.toLowerCase()) : true;
-            const inCollectionFilter = inCollection ? pokemonStore.some(pokemon => pokemon.name == poke.name) : true;
+            const inCollectionFilter = inCollection ? userPokemon.some(pokemon => pokemon.name == poke.name) : true;
 
             return typeFilter && keyFilter && generationFilter && inCollectionFilter;
         })
@@ -305,7 +244,7 @@ export default memo(function PokemonShop(){
                     </section>
                     <section className="nav-section">
                     
-                        <select className="select-filter" onChange={(event)=>{setSortedBy(event.currentTarget.value)}}>
+                        <div className="select-container"><select className="select-filter" onChange={(event)=>{setSortedBy(event.currentTarget.value)}}>
 
                             <option value="">Precio ⭣ </option>
                             <option value="All">Precio ⭡ </option>
@@ -314,21 +253,21 @@ export default memo(function PokemonShop(){
                             <option value ="User">Tasa de aparición ⭣</option>
                             <option value ="User">Tasa de aparición ⭡</option>
 
-                        </select>
+                        </select></div>
                     
-                        <select className="select-filter" onChange={(event)=>{setTypeSelected(event.currentTarget.value)}}>
+                        <div className="select-container"><select className="select-filter" onChange={(event)=>{setTypeSelected(event.currentTarget.value)}}>
                         
                             <option value="">Todos los tipos</option>
                             {typeNames?.map((type, index) => <option key={index} value={type.name.toLowerCase()}>{type.name}</option>)}
                         
-                        </select>
+                        </select></div>
 
-                        <select className="select-filter"  onChange={(event)=>{setGenerationSelected(event.currentTarget.value)}}>
+                        <div className="select-container"><select className="select-filter"  onChange={(event)=>{setGenerationSelected(event.currentTarget.value)}}>
                         
                             <option value="">Todas las generaciones</option>
                             {generationNames?.map((gen, index) => <option key={index} value={index}>{gen.name}</option>)}
                         
-                        </select>
+                        </select></div>
 
                     </section>
 

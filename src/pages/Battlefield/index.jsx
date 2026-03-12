@@ -1,13 +1,12 @@
-import {useEffect, useState, useMemo, useCallback, lazy, Suspense, memo} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
-import {getPokemon} from '../../store/actions/pokemonActions.js'
-import {motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import {useLocation} from 'wouter'
+import { useEffect, useState, useMemo, useCallback, lazy, Suspense, memo } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useLocation } from 'wouter'
 /*const BattleWindow = lazy(()=> import('../../components/battleWindow/battleWindow.jsx'))*/import BattleWindow from '../../components/battleWindow/battleWindow.jsx'
 import {io} from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js'
 
 
-export default memo(function Battlefield({socket, roomId, paramId, P1, P2, TYPES, PLAYER, setActualSection}){
+export default memo(function Battlefield({socket, roomId, paramId, P1, P2, TYPES, PLAYER}){
 	const {VITE_API_URL : API_URL} = import.meta.env;
   // const socket = params.socket //io(`${API_URL}`)
   const [path, setLocation] = useLocation();
@@ -435,16 +434,13 @@ const emitAttack = ({move, index, type, player})=>{
   setEffectEntrie("Esperando al oponente...")
 }
 
-const renderGameOverWindow = (player) =>{
-  return gameState == `${player} wins` ? <div className="game-over-window"><h1>VICTORIA</h1><button onClick={()=>setActualSection("Inicio")}>Aceptar</button></div> : <div className="game-over-window"><h1>DERROTA</h1><button  onClick={()=>setActualSection("Inicio")}>Aceptar</button></div>
-}
 
 	return <>
 	<section className="battlefield-section">
-  {currentPlayer == "One" && <BattleWindow player={"One"} pokemonOne={pokemonOne} pokemonTwo={pokemonTwo} renderImage={renderImageOne} enemyPokeballs={renderImageTwo} setPokemon={emitSetPokemon} setPlayerMove={emitAttack} rounded1={rounded1} rounded2={rounded2} effectEntrie={effectEntrie} moveRunning={moveRunning} gameState={gameState} animationOne={animationOne} animationTwo={animationTwo} damageDoneOne={damageDoneOne} battleMusic={battleMusic} setActualSection={setActualSection} ></BattleWindow>}
+  {currentPlayer == "One" && <BattleWindow player={"One"} socket={socket} pokemonOne={pokemonOne} pokemonTwo={pokemonTwo} renderImage={renderImageOne} enemyPokeballs={renderImageTwo} setPokemon={emitSetPokemon} setPlayerMove={emitAttack} rounded1={rounded1} rounded2={rounded2} effectEntrie={effectEntrie} moveRunning={moveRunning} gameState={gameState} animationOne={animationOne} animationTwo={animationTwo} damageDoneOne={damageDoneOne} battleMusic={battleMusic} ></BattleWindow>}
 
     
-  {currentPlayer == "Two" && <BattleWindow player={"Two"} pokemonOne={pokemonTwo} pokemonTwo={pokemonOne} renderImage={renderImageTwo} enemyPokeballs={renderImageOne} setPokemon={emitSetPokemon} setPlayerMove={emitAttack} rounded1={rounded2} rounded2={rounded1} effectEntrie={effectEntrie} moveRunning={moveRunning} gameState={gameState} animationOne={animationTwo} animationTwo={animationOne} damageDoneOne={damageDoneOne} battleMusic={battleMusic} setActualSection={setActualSection}></BattleWindow>} 
+  {currentPlayer == "Two" && <BattleWindow player={"Two"} socket={socket} pokemonOne={pokemonTwo} pokemonTwo={pokemonOne} renderImage={renderImageTwo} enemyPokeballs={renderImageOne} setPokemon={emitSetPokemon} setPlayerMove={emitAttack} rounded1={rounded2} rounded2={rounded1} effectEntrie={effectEntrie} moveRunning={moveRunning} gameState={gameState} animationOne={animationTwo} animationTwo={animationOne} damageDoneOne={damageDoneOne} battleMusic={battleMusic} ></BattleWindow>} 
   </section>
   </>
 })

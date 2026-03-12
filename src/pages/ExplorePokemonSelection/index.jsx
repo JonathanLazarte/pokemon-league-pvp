@@ -4,7 +4,8 @@ import PokemonList from '../../components/pokemonList/pokemonList.jsx'
 import react, {useState, useEffect, useRef, memo} from 'react'
 import {io} from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js'
 import { v4 as uuidv4 } from 'uuid';
-import {useSelector, /*useDispatch*/} from 'react-redux'
+import { useSelector } from 'react-redux'
+import { selectUserPokemonData } from '../../redux/slices/userPokemonSlice.js'
 
 
 
@@ -18,7 +19,7 @@ export default memo(function ExplorePokemonSelection({}){
   	const [currentPlayer, setCurrentPlayer] = useState("One")
   	const [types, setTypes] = useState([])
   	const token = localStorage.getItem('token')
-    const {loading, pokemonStore, error} = useSelector(state => {return state.pokemonReducer})
+    const {loading, userPokemon, error} = useSelector(selectUserPokemonData)
     //const userName = localStorage.getItem('userName')
 
     //const socket = s//io(`${API_URL}`,{ auth: {token}})
@@ -43,8 +44,8 @@ export default memo(function ExplorePokemonSelection({}){
   const selectPokemon = (pokemonIndex)=>{
   const renderPokeballs = renderPokeballsOne;
   const setRenderPokeballs = setRenderPokeballsOne;
-  const renderDataIndex = pokemonStore.findIndex(poke => poke?.index == pokemonIndex)
-  const pokemon = pokemonStore[renderDataIndex]
+  const renderDataIndex = userPokemon.findIndex(poke => poke?.index == pokemonIndex)
+  const pokemon = userPokemon[renderDataIndex]
   //const setPp = player == "One" ? setPpOne : setPpOne
   //setPp([pokemon.moves[0]?.pp_state,pokemon.moves[1]?.pp_state,pokemon.moves[2]?.pp_state,pokemon.moves[3]?.pp])
   /*const reducedMoves = []
@@ -109,10 +110,11 @@ export default memo(function ExplorePokemonSelection({}){
 	
 	return <>
   { <div className="pokemon-selection">
-    <PokemonList pokemonToRender={pokemonStore} action={selectPokemon} page="Explore" pokeballs={renderPokeballsOne} ></PokemonList>
-
+    <div className='pokemon-list-container'>
+      <PokemonList pokemonToRender={userPokemon} action={selectPokemon} page="Explore" pokeballs={renderPokeballsOne} ></PokemonList>
+    </div>
     <div className="ready-section"><div className="pokemon-one">
-    {renderSelectedPokemon("One")}
+    {/*renderSelectedPokemon("One")*/}
     </div></div>
 
   	</div> 
