@@ -1,123 +1,136 @@
-import { useState, useEffect } from 'react'
-import { selectUserInterfaceData, setActualSection, setUserState } from '../../redux/slices/userInterfaceSlice.js'
-import { useDispatch, useSelector } from 'react-redux'
-import './playButton.css'
+import { useState, useEffect, useCallback, memo } from 'react';
+import { setActualSection, setUserState } from '../../redux/slices/userInterfaceSlice.js';
+import { useDispatch, useSelector } from 'react-redux';
+import './playButton.css';
 
-export default function PlayButton({setRoomId, globalRoom, setGlobalRoom, socket, type, text, modeSelected, okButtonAction}){
-	const [secondsPasseds, setSecondsPasseds] = useState(0)
-	const [minutesPasseds, setMinutesPasseds] = useState(0)
-    const [textInButton, setTextInButton] = useState(text)
-  	const [inQueque, setInQueque] = useState(false)
-    const [isButtonSelected, setIsButtonSelected] = useState(false)
-    const dispatch = useDispatch();
-    const { actualSection, userState } = useSelector(selectUserInterfaceData);
+export default memo(function PlayButton({
+  setRoomId,
+  setGlobalRoom,
+  socket,
+  type,
+  text,
+  modeSelected,
+  okButtonAction,
+}) {
+  const [secondsPasseds, setSecondsPasseds] = useState(0);
+  const [minutesPasseds, setMinutesPasseds] = useState(0);
+  const [textInButton, setTextInButton] = useState(text);
+  const [inQueque, setInQueque] = useState(false);
+  const dispatch = useDispatch();
+  const { actualSection, userState } = useSelector((state) => state.userInterface);
 
-    useEffect(()=>{
-        if(type === 'header' && (userState === 'Explore' || userState === 'Pvp')){
-            setTextInButton('GRUPO')
-        } else if(type === 'header') {
-            setTextInButton('JUEGA')
-        }
-        //setTextInButton(text)
-    },[userState])
-
-  	const handleEmitLeaveRoom = () => {
-        socket?.current?.emit('leave-room', { roomId })
+  useEffect(() => {
+    if (type === 'header' && (userState === 'Explore' || userState === 'Pvp')) {
+      setTextInButton('GRUPO');
+    } else if (type === 'header') {
+      setTextInButton('JUEGA');
+    } else {
+      setTextInButton(text);
     }
+  }, [userState, type, text]);
 
-    const handleEmitStartMatch = ()=>{
-        /*roomUsers.length == 1 ? socket.current.emit('start-match', ({roomId})) :*/ socket?.current?.emit('find-opponent')
-        setInQueque(true)
+  const playAudio = useCallback((path) => {
+    const audio = new Audio(path);
+    audio.play().catch(() => {});
+  }, []);
+
+  const handleEmitLeaveRoom = useCallback(() => {
+    socket?.current?.emit('leave-room');
+  }, [socket]);
+
+  const handleEmitStartMatch = useCallback(() => {
+    socket?.current?.emit('find-opponent');
+    setInQueque(true);
+  }, [socket]);
+
+  const outButtonClickActions = () => {
+    if (type === 'pvp-room') {
+      playAudio('/general/confirm-button-cancel-click.mp3');
+      dispatch(setUserState('Online'));
+      if (setRoomId) setRoomId(undefined);
+      if (setGlobalRoom) setGlobalRoom(undefined);
+      dispatch(setActualSection('Home'));
+      handleEmitLeaveRoom();
     }
-
-    const handleSound = (sound) => {
-        const confirmButtonClick = new Audio('/general/confirm-button-click.mp3');
-        const confirmButtonHover = new Audio('/general/confirm-button-hover.mp3');
-        const confirmButtonCancelClick = new Audio('/general/confirm-button-cancel-click.mp3');
-        const findMatchButtonClick = new Audio('/general/find-match-button-click.mp3');
-        const findMatchButtonHover = new Audio('/general/find-match-button-hover.mp3');
-        const buttonPlayClick = new Audio('/general/button-play-click.mp3');
-        const buttonPlayHover = new Audio('/general/button-play-hover.mp3');
-
-        sound == "confirm-button-click" && confirmButtonClick.play();
-        sound == "confirm-button-hover" && confirmButtonHover.play();
-        sound == "confirm-button-cancel-click" && confirmButtonCancelClick.play();
-        sound == "find-match-button-click" && findMatchButtonClick.play();
-        sound == "find-match-button-Hover" && findMatchButtonHover.play();
-        sound == "button-play-click" && buttonPlayClick.play();
-        sound == "button-play-hover" && buttonPlayHover.play()
+    if (type === 'explore-room' || type === 'modeSelection') {
+      playAudio('/general/confirm-button-cancel-click.mp3');
+      if (setGlobalRoom) setGlobalRoom(undefined);
+      dispatch(setActualSection('Home'));
+      dispatch(setUserState('Online'));
     }
+  };
 
-    const outButtonClickActions = () => {
-              
-        if(type == "pvp-room"){
-            handleSound('confirm-button-cancel-click');
-            dispatch(setUserState('Online'));
-            setRoomId();
-            setGlobalRoom();
-            dispatch(setActualSection("Home"));
-            handleEmitLeaveRoom()
-        }
-        if(type == "explore-room" | type == "modeSelection"){
-            handleSound('confirm-button-cancel-click');
-            setGlobalRoom();
-            dispatch(setActualSection("Home"));
-            dispatch(setUserState('Online'));
-        }
+  const okButtonClickActions = () => {
+    if (type === 'pvp-room') {
+      playAudio('/general/find-match-button-click.mp3');
+      setSecondsPasseds(0);
+      handleEmitStartMatch();
     }
-
-    const okButtonClickActions = () => {
-
-        if(type == "pvp-room"){
-            handleSound('find-match-button-click');
-            setSecondsPasseds(0)
-            handleEmitStartMatch();
-        }
-        if(type == "explore-room"){
-            dispatch(setActualSection("IaMatch"));
-            dispatch(setUserState('In explore match'))
-        }
-        if(type == "header"){
-            handleSound('button-play-click');
-            actualSection != 'ModeSelection' ? dispatch(setActualSection("ModeSelection")) : null;
-        }
-        if(type == "modeSelection"){
-            handleSound('confirm-button-click');
-            dispatch(setUserState(modeSelected));
-            setGlobalRoom(modeSelected);
-        }
-        if(type == "arenaPokemonSelection"){
-            okButtonAction();
-        }
-
+    if (type === 'explore-room') {
+      dispatch(setActualSection('IaMatch'));
+      dispatch(setUserState('In explore match'));
     }
+    if (type === 'header') {
+      playAudio('/general/button-play-click.mp3');
+      if (actualSection !== 'ModeSelection') dispatch(setActualSection('ModeSelection'));
+    }
+    if (type === 'modeSelection') {
+      playAudio('/general/confirm-button-click.mp3');
+      dispatch(setUserState(modeSelected));
+      if (setGlobalRoom) setGlobalRoom(modeSelected);
+    }
+    if (type === 'arenaPokemonSelection') {
+      if (okButtonAction) okButtonAction();
+    }
+  };
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-        
-            if(secondsPasseds == 59){
-            	setSecondsPasseds(0);
-            	setMinutesPasseds(minutesPasseds + 1)
-            } else{
-            	setSecondsPasseds(secondsPasseds + 1);
-            }
+  useEffect(() => {
+    let interval = null;
+    if (inQueque) {
+      interval = setInterval(() => {
+        setSecondsPasseds((prevSec) => {
+          if (prevSec === 59) {
+            setMinutesPasseds((prevMin) => prevMin + 1);
+            return 0;
+          }
+          return prevSec + 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [inQueque]);
 
-        }, 1000);
-        // Limpiar el intervalo cuando el componente se desmonte
-        return () => clearInterval(interval);
-    }, [secondsPasseds]);
+  const isSelected =
+    (actualSection === 'ModeSelection' && type === 'header') ||
+    (userState !== 'Online' && type === 'header');
 
-	return (
-      <div className="play-and-out-button">
-    	    {type != "header" && type != "return-to-room" ? <div className="out-button-border">
-              <div translate="no" onClick={()=>outButtonClickActions()} className="out-button">X</div>
-          </div> : <div className="gameLogoContainer"><div className="gameLogo"></div></div>}
-          <div className={`box-play-button ${actualSection == "ModeSelection" && type == 'header' ? 'selected' : null} ${userState != 'Online' && type == 'header' ? 'selected' : null}`}>
-              <div className={`border-play-button ${actualSection == "ModeSelection" && type == 'header' ? 'selected' : null} ${userState != 'Online' && type == 'header' ? 'selected' : null}`}>
-                  <div className={`circunferense ${actualSection == "ModeSelection" && type == 'header' ? 'selected' : null} ${userState != 'Online' && type == 'header' ? 'selected' : null}`}></div>
-                  <h3 onMouseEnter={()=>handleSound('find-match-button-hover')} onClick={()=>{ okButtonClickActions(); setIsButtonSelected(true); }} className={`play-button ${actualSection == "ModeSelection" && type == 'header' ? 'selected' : null} ${userState != 'Online' && type == 'header' ? 'selected' : null}`}>{!inQueque ? textInButton : "En cola: " + minutesPasseds + ":" + secondsPasseds}</h3>
-              </div>
+  return (
+    <div className="play-and-out-button">
+      {type !== 'header' && type !== 'return-to-room' ? (
+        <div className="out-button-border">
+          <div translate="no" onClick={outButtonClickActions} className="out-button">
+            X
           </div>
-    	</div>
-  )
-}
+        </div>
+      ) : (
+        <div className="gameLogoContainer">
+          <div className="gameLogo"></div>
+        </div>
+      )}
+      <div className={`box-play-button ${isSelected ? 'selected' : ''}`}>
+        <div className={`border-play-button ${isSelected ? 'selected' : ''}`}>
+          <div className={`circunferense ${isSelected ? 'selected' : ''}`}></div>
+          <h3
+            onMouseEnter={() => playAudio('/general/find-match-button-hover.mp3')}
+            onClick={okButtonClickActions}
+            className={`play-button ${isSelected ? 'selected' : ''}`}
+          >
+            {!inQueque ? textInButton : `En cola: ${minutesPasseds}:${secondsPasseds < 10 ? `0${secondsPasseds}` : secondsPasseds}`}
+          </h3>
+        </div>
+      </div>
+    </div>
+  );
+});

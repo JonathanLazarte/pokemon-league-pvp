@@ -1,36 +1,34 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createSelector} from 'reselect';
-
-const {VITE_API_URL : API_URL} = import.meta.env;
+import { createSelector } from 'reselect';
+import { apiFetch, getAuthToken } from '../../services/api.js';
 
 export const getUserItems = createAsyncThunk(
   'userItems/getUserItems',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}pokemons/users/getItems`, {
+      const response = await apiFetch('pokemons/users/getItems', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userID: id }),
+        body: JSON.stringify({ userID: id || getAuthToken() }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch Pokémon');
+        throw new Error('Failed to fetch user items');
       }
 
       const data = await response.json();
-      return data; // Return the data to be used in the reducer
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message); // Handle errors
+      return rejectWithValue(error.message);
     }
   }
 );
+
 export const buyItem = createAsyncThunk(
   'userItems/buyItem',
-  async ( props, { rejectWithValue }) => {
+  async (props, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}pokemons/users/buyItem`, {
+      const response = await apiFetch('pokemons/users/buyItem', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(props),
       });
 
@@ -39,94 +37,90 @@ export const buyItem = createAsyncThunk(
       }
 
       const data = await response.json();
-      return data; // Return the data to be used in the reducer
-
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message); // Handle errors
+      return rejectWithValue(error.message);
     }
   }
 );
+
 export const consumeItem = createAsyncThunk(
   'userItems/consumeItem',
-  async( {itemId, pokemonIndex}, { rejectWithValue })=>{
-    try{   
-      response = await fetch(`${API_URL}pokemons/users/updatelevel`,{
+  async ({ itemId, pokemonIndex }, { rejectWithValue }) => {
+    try {
+      const pokeballsState = [{ index: pokemonIndex, itemId }];
+      const response = await apiFetch('pokemons/users/updatelevel', {
         method: 'POST',
-        headers: {'Content-Type' : 'application/json'},
         body: JSON.stringify({
-          userId : token,
+          userId: getAuthToken(),
           pokeballsState,
-          pokemonExp : 0
-        })
-      })
+          pokemonExp: 0,
+        }),
+      });
 
-      if(!response.ok){
-        throw new Error('Failed to consume item')
+      if (!response.ok) {
+        throw new Error('Failed to consume item');
       }
 
-      data = await response.json()
-      return data
-
-    } catch(error){
-      return rejectWithValue(error.message)
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
-)
+);
+
 const initialState = {
   loading: false,
   items: [],
-  error: "",
+  error: '',
 };
-
 
 const userItemsSlice = createSlice({
   name: 'userItems',
   initialState,
-  reducers: {
-    buyItem: (state, action) => {
-
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getUserItems.pending, (state) => {
         state.loading = true;
-        state.error = ''; // Clear any previous errors
+        state.error = '';
       })
       .addCase(getUserItems.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload; // Update state with fetched Items
+        state.items = action.payload || [];
       })
       .addCase(getUserItems.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Something went wrong'; // Set error message
+        state.error = action.payload || 'Something went wrong';
       })
       .addCase(buyItem.pending, (state) => {
         state.loading = true;
-        state.error = ''; // Clear any previous errors
+        state.error = '';
       })
       .addCase(buyItem.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload; // Update state with fetched Items
+        if (action.payload) {
+          state.items.push(action.payload);
+        }
       })
       .addCase(buyItem.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Something went wrong'; // Set error message
+        state.error = action.payload || 'Something went wrong';
       })
       .addCase(consumeItem.pending, (state) => {
         state.loading = true;
-        state.error = ''; // Clear any previous errors
+        state.error = '';
       })
-      .addCase(consumeItem.fulfilled, (state, action) => {
+      .addCase(consumeItem.fulfilled, (state) => {
         state.loading = false;
-        //state.items = action.payload; // Update state with fetched Items
       })
       .addCase(consumeItem.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Something went wrong'; // Set error message
+        state.error = action.payload || 'Something went wrong';
       });
   },
-})
+});
 
 export const selectUserItemsState = (state) => state.userItems;
 export const selectUserItems = (state) => state.userItems.items;

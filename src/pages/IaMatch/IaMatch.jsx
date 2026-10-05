@@ -1,577 +1,539 @@
-import {useEffect, useState, useMemo, useCallback, lazy, Suspense, memo} from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import {motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import {useLocation} from 'wouter'
-import ActionsMenu from '../../components/actionsMenu/actionsMenu.jsx'
-import MoveButton from '../../components/movesButtons/moveButton'
-import {io} from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js'
-const BattleWindow = lazy(()=> import('../../components/battleWindow/battleWindow.jsx'))//import BattleWindow from '../../components/battleWindow/battleWindow.jsx'
-import { selectUserPokemonData, updatePokemon, getUserPokemon } from '../../redux/slices/userPokemonSlice.js'
-import { selectUserItemsData } from '../../redux/slices/userItemsSlice.js'
-import {BlinkBlur} from 'react-loading-indicators'
+import { useEffect, useState, useMemo, useCallback, memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useMotionValue, useTransform, animate } from 'framer-motion';
+import BattleWindow from '../../components/battleWindow/battleWindow.jsx';
+import NamePokemonModal from '../../components/NamePokemonModal/NamePokemonModal.jsx';
+import { selectUserPokemonData } from '../../redux/slices/userPokemonSlice.js';
+import { BlinkBlur } from 'react-loading-indicators';
+import { useBattleAudio } from '../../hooks/useBattleAudio.js';
+import { apiFetch, getAuthToken } from '../../services/api.js';
+import { getBonus, getEffectiveness } from '../../utils/battleMath.js';
+import { calculatePokemonHp, calculatePokemonStat, generateRandomIvs, determineTurnOrder } from '../../utils/pokemonStats.js';
 
+export default memo(function MatchVsIa({ setActualSection }) {
+  const [pokemonTwo, setPokemonTwo] = useState();
+  const [pokemonOne, setPokemonOne] = useState();
+  const [moveRunning, setMoveRunning] = useState(false);
+  const [effectEntrie, setEffectEntrie] = useState('');
+  const [renderImageOne, setRenderImageOne] = useState();
+  const [renderImageTwo, setRenderImageTwo] = useState();
+  const [types, setTypes] = useState();
+  const [animationTwo, setAnimationTwo] = useState(false);
+  const [animationOne, setAnimationOne] = useState(false);
+  const [damageDoneOne, setDamageDoneOne] = useState();
+  const [playerOneMove, setPlayerOneMove] = useState(null);
+  const [playerTwoMove, setPlayerTwoMove] = useState(null);
+  const [turn, setTurn] = useState(1);
+  const [gameState, setGameState] = useState('Active');
+  const [obtainedStats, setObtainedStats] = useState();
+  const [moveToLearn, setMoveToLearn] = useState();
+  const [pendingCapture, setPendingCapture] = useState(null);
 
-
-
-export default memo(function MatchVsIa({socket, setActualSection}){
-  const {VITE_API_URL : API_URL} = import.meta.env;
-  // const socket = params.socket //io(`${API_URL}`)
-  const [path, setLocation] = useLocation();
-  const [pokemonTwo, setPokemonTwo] = useState()
-  const [pokemonOne, setPokemonOne] = useState()
-  const [moveRunning, setMoveRunning] = useState(false)
-  const [effectEntrie, setEffectEntrie] = useState()
-  const [renderImageOne, setRenderImageOne] = useState()
-  const [renderImageTwo, setRenderImageTwo] = useState()
-  const [types, setTypes] = useState()
-  const [currentPlayer, setCurrentPlayer] = useState("One")
-  const [animationTwo, setAnimationTwo] = useState(false)
-  const [animationOne, setAnimationOne] = useState(false)
-  const [damageDoneOne, setDamageDoneOne] = useState()
-  const token = localStorage.getItem('token')
-  const [playerOneMove, setPlayerOneMove] = useState(null)
-  const [playerTwoMove, setPlayerTwoMove] = useState(null)
-  const [turn, setTurn] = useState(1)
-  const [gameState, setGameState] = useState("Active")
-  const [battleMusic, setBattleMusic] = useState(()=>{ const song = new Audio(`https://github.com/jonylazarte/resources/raw/refs/heads/main/wild_3.ogg`); song.volume = 0.4; return song; })
-  const p0 = localStorage.getItem(`pokeball0`)
-  const p1 = localStorage.getItem(`pokeball1`)
-  const p2 = localStorage.getItem(`pokeball2`)
+  const { audioRef } = useBattleAudio('https://github.com/jonylazarte/resources/raw/refs/heads/main/wild_3.ogg', 0.4);
+  const p0 = localStorage.getItem('pokeball0');
+  const p1 = localStorage.getItem('pokeball1');
+  const p2 = localStorage.getItem('pokeball2');
   const { userPokemon } = useSelector(selectUserPokemonData);
-  const { userItems : itemsOne } = useSelector(selectUserItemsData);
-  const [obtainedStats, setObtainedStats] = useState()
-  const [moveToLearn, setMoveToLearn] = useState()
-  const dispatch = useDispatch()
-
-   useEffect(()=>{
-    if(battleMusic && pokemonTwo){
-    /*const song = new Audio('http://localhost:5173/src/pages/Iamatch/wild.ogg')
-    song.volume = 0.1;
-    setBattleMusic(song)*/
-    battleMusic.paused && battleMusic.play();
-    battleMusic.addEventListener('ended', () => {
-    battleMusic.play(); // Reproduce el audio nuevamente al finalizar
-    }); 
-  }
-
-},[pokemonTwo])
-  
-  useEffect(()=>{
-    if(turn>1){
-    const randomNum = Math.floor(Math.random() * pokemonTwo.moves.length)
-    setPlayerTwoMove({move: pokemonTwo.moves[randomNum], index: randomNum, player: "Two", type: "Attack"})
-    //setEffectEntrie(`Que hará ${pokemonOne.name.toUpperCase()}?`)
-    }
-  },[turn]) 
-
-  const turnSystem = async ()=>{
-   if(playerOneMove != null && playerTwoMove != null){
-    // const {velocidadUno, velocidadDos} = [pokemonOne.stats[4].actual_stat, pokemonTwo.stats[4].actual_stat]
-    const velocidadUno = pokemonOne.stats[5].actual_stat
-    const velocidadDos = pokemonTwo.stats[5].actual_stat
-    const PrimerMovimiento = playerOneMove.type == "PokemonChange" ? playerOneMove : playerTwoMove.type == "PokemonChange" ? playerTwoMove : velocidadUno > velocidadDos ? playerOneMove : playerTwoMove
-    const SegundoMovimiento = PrimerMovimiento.player == "One" ? playerTwoMove : playerOneMove
-
-    console.log("primer movimiento")
-    console.log(PrimerMovimiento)
-    console.log("Segundo movimiento")
-    console.log(SegundoMovimiento)
-
-    const resolution = await handleAttack(PrimerMovimiento).then(async resolution => {return resolution} /*== "Enemigo vivo" ? await handleAttack(SegundoMovimiento) : console.log(resolution)*/).catch(error=>console.log(error))
-    console.log(resolution)
-    resolution.name == "Enemigo vivo" && await handleAttack(SegundoMovimiento)
-    resolution.name == "Pokemon changed" && await handleAttack({...SegundoMovimiento, updatedIndex: resolution })
-    //await handleAttack(PrimerAtaque).then(resolution => resolution == "Enemigos abatidos" ? setGameState(`${PrimerAtaque.player} gana`) : handleAttack(SegundoAtaque).then(resolution => resolution == "Enemigos abatidos" ? setGameState(`${SegundoAtaque.player} gana`) : null))
-    /*velocidadUno > velocidadDos ? await handleAttack(playerOneMove).then(resolution => resolution == "Enemigos abatidos" ? setGameState("Winner") : handleAttack(playerTwoMove))
-                                : await handleAttack(playerTwoMove).then(resolution => resolution == "Enemigo vivo" && handleAttack(playerOneMove))*/   
-    setPlayerOneMove(null)
-    setTurn(prevTurn=>{return prevTurn +1})
-   } 
-  }
-// HAY QUE PONER LA CONDICIONAL DE DOS ATAQUES SETEADOS ACA, EN VEZ DE ARRIBA!!
-useEffect(() => {
-  const handleTurn = async () => {
-    await turnSystem();
-  };
-  if(playerOneMove != null && playerTwoMove != null){  handleTurn(); }
-}, [playerOneMove, playerTwoMove]);
-
-  const getEffectiveness = (movetype, enemytypes)=>{
-  const mtype = types.find(type => type.name == movetype.name).damage_relations
-  let isDouble = mtype.double_damage_to.some(type => enemytypes.some(t => t.type.name == type.name))
-  let isHalf = mtype.half_damage_to.some(type => enemytypes.some(t => t.type.name == type.name))
-  let isNo = mtype.no_damage_to.some(type => enemytypes.some(t => t.type.name == type.name))
-  
-  const effectiveness = isDouble ? 2 : isHalf ? 0.5 : isNo ? 0 : 1
-  return(effectiveness)  
-  }
-
-  const getBonus = (movetype, owntypes) =>{
-  let Is50Percent = owntypes.some(owntype => owntype.type.name == movetype.name)
-  const bonus = Is50Percent ? 1.5 : 1
-  return bonus
-  }
-
-
-
-
-  const count1 = useMotionValue(0)
-  const rounded1 = useTransform(count1, latest => Math.round(latest))  
-
-  const count2 = useMotionValue(0)
-  const rounded2 = useTransform(count2, latest => Math.round(latest)) 
 
   useEffect(() => {
-  const controls = animate(count1, pokemonOne?.hp_state ?? 0, {velocity:2, duration:2})
-  return () => controls.stop()
-}, [pokemonOne])
+    if (turn > 1 && pokemonTwo?.moves?.length) {
+      const randomNum = Math.floor(Math.random() * pokemonTwo.moves.length);
+      setPlayerTwoMove({
+        move: pokemonTwo.moves[randomNum],
+        index: randomNum,
+        player: 'Two',
+        type: 'Attack',
+      });
+    }
+  }, [turn, pokemonTwo]);
+
+  const turnSystem = useCallback(async () => {
+    if (playerOneMove != null && playerTwoMove != null) {
+      const order = determineTurnOrder(playerOneMove, playerTwoMove, pokemonOne, pokemonTwo);
+      if (!order) return;
+
+      const { firstMove, secondMove } = order;
+      const resolution = await handleAttack(firstMove);
+
+      if (resolution?.name === 'Enemigo vivo') {
+        await handleAttack(secondMove);
+      } else if (resolution?.name === 'Pokemon changed') {
+        await handleAttack({ ...secondMove, updatedIndex: resolution });
+      }
+
+      setPlayerOneMove(null);
+      setTurn((prev) => prev + 1);
+    }
+  }, [playerOneMove, playerTwoMove, pokemonOne, pokemonTwo]);
 
   useEffect(() => {
-  const controls = animate(count2, pokemonTwo?.hp_state ?? 0, {velocity:2, duration:2})
-  return () => controls.stop()
-}, [pokemonTwo])
-
-
-
-const pokemonDefeated = (winner, defeated) => {
-  return new Promise(async(resolver)=>{
- 
-  const enemy = winner == "One" ? pokemonTwo : pokemonOne
-  const attacker = winner == "One" ? pokemonOne : pokemonTwo
-  const enemyPokeballs = winner == "One" ? renderImageTwo : renderImageOne
-  const setEnemyPokeballs = winner == "One" ? setRenderImageTwo : setRenderImageOne
-  const attackerPokeballs = winner == "One" ? renderImageOne : renderImageTwo
-  const setAttackerPokeballs = winner == "One" ? setRenderImageOne : setRenderImageTwo
-  const setEnemyPokemon = winner == "One" ? setPokemonTwo : setPokemonOne
-  const attackerIndexInPokeballs = attackerPokeballs.findIndex(p => p.index == attacker.index)
-
-    /*const effectEntriePromise  = new Promise((resolve, reject)=>{
-        setTimeout(()=>{
-          resolve(
-            setEffectEntrie(attacker.name.toUpperCase() + " Ha subido de nivel!")
-            )
-        },2000)
-      })
-    const endMatchPromise  = new Promise((resolve, reject)=>{
-        setTimeout(()=>{
-          resolve(
-            setIsReady(false)
-            )
-        },2000)
-      })*/
-  
-  // const aviableEnemyPokeballs = enemyPokeballs.filter(pokeball => pokeball.hp_state > 0)
-
-  const defeatedEnemyIndexInPokeballs = enemyPokeballs.findIndex(pokeball=> pokeball.index == defeated.index/*aviableEnemyPokeballs[0].index*/)
-  //const aviableEnemyPokeballs = enemyPokeballs.findIndex(pokeball => pokeball.index != defeated.index) //
-  const aviableEnemyPokeballs = enemyPokeballs.findIndex(pokeball => pokeball.hp_state != 0 && pokeball.index != defeated.index)
-
-  if(/*aviableEnemyPokeballs != -1*/ 1==1)  {
-  setEffectEntrie(enemy.name.toUpperCase() + " Ha sido derrotado!")
-  const pokeballsState = await renderImageOne.map(pokeball=>{
-  let state = {
-      index : pokeball.index,
-      hp : pokeball.hp_state    //HAY QUE USAR ESTO EN LUGAR DE UNDEFINED, Y USAR UNA VARIABLE NUEVA PARA AGREGAR HP MEDIANTE LAS POCIONES
-  }
-  return state
-  })
-
-  const enemyBaseExperience = enemy.base_experience; // Valor base ajustable
-  const enemyLevel = enemy.level
-  const experienciaGanada = enemyBaseExperience * enemyLevel / 7; 
-  const E = enemy.base_experience // Exp base del enemigo derrotado
-  const Nv = enemy.level // Nivel del enemigo derrotado
-  const NvU = attacker.level // Nivel del pokemon aliado
-  const P = 1 // Participantes
-  const Base = E * Nv / P / 5
-  const Corrector_A = (2 * Nv + 10) ^ (5/2)
-  const Corrector_B = (Nv + NvU + 10)  ^ (5/2)
-  const Bonus = 1
-  const Poder = 1
-  const Exp = (Base * Corrector_A / Corrector_B +1) * Bonus * Poder
-  const {updatedPokemon, movesToLearn} = winner == "One" && await fetch(`${API_URL}pokemons/users/updatelevel`,{
-        method: 'POST',
-        headers: {'Content-Type' : 'application/json'},
-        body: JSON.stringify({
-          userId : token,
-          pokeballsState,
-          pokemonExp : Exp
-        })
-      }).then(response => response.json())
-  winner == "One" && setAttackerPokeballs(updatedPokemon)
-  winner == "One" && setPokemonOne(updatedPokemon[attackerIndexInPokeballs])
-  const learnMovesPromises = movesToLearn && await movesToLearn.reduce(async (promiseChain, {name, index, moveToLearn}) => {
-      await promiseChain;
-      console.log(name.toUpperCase() + " quiere aprender " + moveToLearn.name.toUpperCase())
-      const pokemonIndexInPokeballs = renderImageOne.findIndex(pokemon => pokemon.index == index)
-      const moveLearnedIndex = await new Promise(async (resolve)=>{       
-        await setMoveToLearn({moveToLearn, resolve, pokemonIndexInPokeballs})      
-      })
-      setAttackerPokeballs(prevAP => {
-          const newPokeballs = [...prevAP];
-          newPokeballs[pokemonIndexInPokeballs].moves[moveLearnedIndex] = moveToLearn
-          return newPokeballs
-        })
-      moveLearnedIndex == 0 ? setPokemonOne(prevP => {
-          const newPokemon = {...prevP};
-          newPokemon.moves[moveLearnedIndex] = moveToLearn
-          return newPokemon
-        }) : null
-  return moveLearnedIndex   // retorna el index del movimiento aprendido para continuar o terminar con el bucle
-  }, Promise.resolve()).then(()=>{setMoveToLearn();})
- // await Promise.all(learnMovesPromises)
-  const updatedAttacker = updatedPokemon && updatedPokemon.find(pokemon=> pokemon.index == attacker.index)
-  winner == "One" && await new Promise(resolve => setTimeout(() => resolve(setEffectEntrie(attacker.name.toUpperCase() + " Ha ganado " + Math.floor(Exp) + " EXP!")), 1000))
-  if(winner == "One" && updatedAttacker.level != NvU){
-    //const obtainedStats = {}
-    await new Promise(resolve => setTimeout(() => resolve(setEffectEntrie(attacker.name.toUpperCase() + " Ha subido de nivel!"),setObtainedStats([...updatedAttacker.stats, {actual_stat: updatedAttacker.level}])), 1000))
-    //await new Promise(resolve => setTimeout(()=> resolve(),1500))
-  }
-  //winner == "One" && dispatch(updatePokemon(renderImageOne))
-  aviableEnemyPokeballs != -1 ? await new Promise(resolve => setTimeout(() => resolve(
-          winner == "One" && setEnemyPokemon(enemyPokeballs[aviableEnemyPokeballs]),
-          setObtainedStats(),
-        /*setEnemyPokeballs(prevEP=>{
-          const newEnemyPokeballs = [...prevEP];
-          newEnemyPokeballs[defeatedEnemyIndexInPokeballs].hp_state = 0
-          return newEnemyPokeballs
-          }),*/
-          setMoveRunning(false),
-          resolver("Pokemon derrotado"),
-        ), 1500))
-  : await new Promise(resolve => setTimeout(() => resolve(
-    //dispatch(getPokemon('/users/pokemon')),
-    setEffectEntrie(attacker.name.toUpperCase() + " WINS"),
-    setGameState(`${winner} wins`),
-    localStorage.setItem(`pokeball0`, null),
-    localStorage.setItem(`pokeball1`, null),
-    localStorage.setItem(`pokeball2`, null)
-   // setAttackerPokeballs(ep=>[...ep.slice(0, target.index), updatedPokemon, ...ep.slice(target.index + 1)])
-    ), 1500))
-
-  }
-   else{
-  }
-
-
-})
-}
-
-
-
-  const handleAttack = async ({move, index, updatedIndex, hitsToGive, randomVs, player, type})=>{
-    setMoveRunning(true)
-    setEffectEntrie("Cargando movimiento")
-    
-    if (type == "Attack") {
-      const audio = new Audio(`https://github.com/jonylazarte/resources/raw/refs/heads/main/${move.name}.mp3`);
-      audio.volume = 0.3;
-      var attackDuration = 1;
-      function obtenerDuracionVideo(audio) {
-        return new Promise((resolve, reject) => {
-          audio.addEventListener('loadedmetadata', () => {
-            resolve(audio.duration);
-            audio.play()
-          });
-          audio.addEventListener('error', () => {
-              reject(new Error('Error loading audio file'));
-          });
-        });
-      }
-      try {
-        const duracion = await obtenerDuracionVideo(audio);
-        attackDuration = duracion;
-      } catch (error) {
-          console.error('Error getting audio duration:', error);
-          // Handle the error gracefully, e.g., set a default duration or display an error message
-          const alternativeAudio = new Audio(`https://github.com/jonylazarte/resources/raw/refs/heads/main/${"hit-normal-damage"}.mp3`);
-          const alternativeDuration = await obtenerDuracionVideo(alternativeAudio);
-          console.log(alternativeDuration)
-          attackDuration = alternativeDuration;
-          alternativeAudio.play() // Assuming a default duration
-      }
+    if (playerOneMove != null && playerTwoMove != null) {
+      turnSystem();
     }
-    const handlePlaySound = (soundUrl) => {
-    const audio = new Audio(soundUrl);
-    audio.volume = 0.3;
-    audio.play();
-    }
-  return new Promise((resolve, reject)=>{
+  }, [playerOneMove, playerTwoMove, turnSystem]);
 
-  const attackerHP = player == "One" ? pokemonOne.stats[0].actual_stat : pokemonTwo.stats[0].actual_stat
-  const targetHP = player == "One" ? pokemonTwo.stats[0].actual_stat : pokemonOne.stats[0].actual_stat
-  const setTargetPokemon = player == "One" ? setPokemonTwo : setPokemonOne
-  const setAttackerPokemon = player == "One" ? setPokemonOne : setPokemonTwo
-  const setAnimation = player == "One" ? setAnimationTwo : setAnimationOne
-  const enemyPokeballs = player == "One" ? renderImageTwo : renderImageOne
-  const setEnemyPokeballs = player == "One" ? setRenderImageTwo : setRenderImageOne
-  const attackerPokeballs = player == "One" ? renderImageOne : renderImageTwo
-  const setAttackerPokeballs = player == "One" ? setRenderImageOne : setRenderImageTwo
-  const updatedEnemyIndexInPokeballs = updatedIndex ? updatedIndex.changedPokemonTo /*enemyPokeballs.findIndex(pokeball=> pokeball.index == updatedIndex.changedPokemonTo)*/ : null
-  const updatedEnemy = updatedEnemyIndexInPokeballs ? enemyPokeballs[updatedEnemyIndexInPokeballs] : null
-  const attacker = player == "One" ? pokemonOne : pokemonTwo
-  const target = updatedEnemy ? updatedEnemy : player == "One" ? pokemonTwo : pokemonOne;
-  const enemyIndexInPokeballs = updatedEnemyIndexInPokeballs != null ? updatedEnemyIndexInPokeballs : enemyPokeballs.findIndex(pokeball=> pokeball.index == target.index)
-  const attackerIndexInPokeballs = attackerPokeballs.findIndex(pokeball=> pokeball.index == attacker.index)
+  const count1 = useMotionValue(0);
+  const rounded1 = useTransform(count1, (latest) => Math.round(latest));
+  const count2 = useMotionValue(0);
+  const rounded2 = useTransform(count2, (latest) => Math.round(latest));
 
+  useEffect(() => {
+    const controls = animate(count1, pokemonOne?.hp_state ?? 0, { velocity: 2, duration: 2 });
+    return () => controls.stop();
+  }, [pokemonOne?.hp_state]);
 
-  if(type == "Attack"){
-    var hitsGiven = 0
-    const hitsToGive = move.meta?.max_hits != null ? Math.floor(Math.random() * (move.meta.max_hits - move.meta.min_hits +1)) + move.meta.min_hits : 1
-    var localTargetHP = target.hp_state //updatedEnemy?.hp_state || player == "One" ? pokemonTwo.hp_state : pokemonOne.hp_state
-    const hitsToGiveArray = new Array(hitsToGive).fill(0);
+  useEffect(() => {
+    const controls = animate(count2, pokemonTwo?.hp_state ?? 0, { velocity: 2, duration: 2 });
+    return () => controls.stop();
+  }, [pokemonTwo?.hp_state]);
 
-    setMoveRunning(true)
-    setEffectEntrie(attacker.name.toUpperCase() + " usó " + move.name.toUpperCase() +"!")
+  const pokemonDefeated = useCallback(
+    (winner, defeated) => {
+      return new Promise(async (resolver) => {
+        const enemy = winner === 'One' ? pokemonTwo : pokemonOne;
+        const attacker = winner === 'One' ? pokemonOne : pokemonTwo;
+        const enemyPokeballs = winner === 'One' ? renderImageTwo : renderImageOne;
+        const setEnemyPokemon = winner === 'One' ? setPokemonTwo : setPokemonOne;
+        const attackerIndexInPokeballs = renderImageOne.findIndex((p) => p.index === attacker.index);
 
-  
+        const availableEnemyPokeballs = enemyPokeballs.findIndex(
+          (pokeball) => pokeball.hp_state !== 0 && pokeball.index !== defeated.index
+        );
 
-    const processAttack = async () => {
+        setEffectEntrie(`${enemy.name.toUpperCase()} has been defeated!`);
+        const pokeballsState = renderImageOne.map((pokeball) => ({
+          index: pokeball.index,
+          hp: pokeball.hp_state,
+        }));
 
-      await hitsToGiveArray.reduce(async ( promiseChain, prop ) => {
-          await promiseChain;
-          return new Promise((res, rej)=>{
-            var isFailed = Math.floor(Math.random() * 100 + 1) >= move.accuracy && move.accuracy != null ? true :  false
-            const damage_class = move.damage_class.name
-            const V = Math.floor(Math.random() * 16) + 85; //Varación. entre 85 y 100
-            const N = attacker.level // Nivel del pokemón atacante
-            const A = damage_class == 'physical' ? attacker.stats[1].actual_stat : attacker.stats[3].actual_stat  // Cantidad de ataque. fisico-especial
-            const D = damage_class == 'physical' ? updatedEnemy?.stats[2].actual_stat || target.stats[2].actual_stat : updatedEnemy?.stats[4].actual_stat || target.stats[4].actual_stat // Defensa del rival. fisica-especial
-            const B = getBonus(move.type, attacker?.types) //Bonificacion. 1 - 1.5 - 2
-            const E = getEffectiveness(move.type, updatedEnemy?.types || target?.types) // Efectividad. 0 - 0.25 - 0.5 - 1 - 2 - 4
-            const P = move.power
-            //console.log("Bonus: " + B, "Efectividad: "+ E )
-            var finalDamage = Math.floor(0.01 * B * E * V * ( (0.2 * N + 1) * A * P / (25 * D) + 2))
+        const E = enemy.base_experience;
+        const Nv = enemy.level;
+        const NvU = attacker.level;
+        const P = 1;
+        const Base = (E * Nv) / P / 5;
+        const Corrector_A = (2 * Nv + 10) ^ (5 / 2);
+        const Corrector_B = (Nv + NvU + 10) ^ (5 / 2);
+        const Bonus = 1;
+        const Poder = 1;
+        const Exp = ((Base * Corrector_A) / Corrector_B + 1) * Bonus * Poder;
 
-            setTimeout(async () => {
-              !isFailed ? localTargetHP = Math.max(0, localTargetHP - finalDamage) :  finalDamage = 0;
-              !isFailed ? setDamageDoneOne(finalDamage) : setDamageDoneOne("Miss!")
-              isFailed && setEffectEntrie("Ha fallado!");
-              setAnimation(true)
-              hitsGiven += 1
-              /*setTargetPokemon(prevPokemon =>{
-               var newTargetPokemon = {...prevPokemon}
-               newTargetPokemon.hp_state -= finalDamage
-                return newTargetPokemon
-              })*/
-              await setTargetPokemon(prevPokemon => ({
-                ...prevPokemon, hp_state: localTargetHP 
-              })); // esto se ejecuta 2 veces por el seteo del estado de abajo, y unicamente luego de cambiar un pokemon o al iniciar la batalla. Hay que arreglarlo!!
-              await setEnemyPokeballs(prevEP => {
-                const newEnemyPokeballs = prevEP.map((pokeball, index) =>
-                  index === enemyIndexInPokeballs
-                    ? { ...pokeball, hp_state: localTargetHP }
-                    : pokeball
-                );
-                return newEnemyPokeballs;
-              });
-              await setAttackerPokeballs(prevAP => {
-                const newAttackerPokeballs = [...prevAP]; // Shallow copy of the array
-                const updatedPokeball = { ...newAttackerPokeballs[attackerIndexInPokeballs] }; // Copy the pokeball object
-                const updatedMoves = [...updatedPokeball.moves]; // Copy the moves array
-                updatedMoves[index] = { ...updatedMoves[index], pp_state: updatedMoves[index].pp_state - 1 }; // Update pp_state immutably
-                updatedPokeball.moves = updatedMoves; // Assign the updated moves array
-                newAttackerPokeballs[attackerIndexInPokeballs] = updatedPokeball; // Assign the updated pokeball
-                return newAttackerPokeballs;
-              });
-
-              res(console.log("inner chain"));
-
-            }, attackDuration * 1000 / 2)
-          })
-            // continuar o terminar con el bucle
-      }, Promise.resolve()).then(()=>{console.log("chain done")}) 
-
-      await new Promise((res, rej) => {
-        let E = 2;
-                  setTimeout(()=>{
-                    console.log("second step done")
-                    setAnimation(false)
-                    const effectEntrie = E == 2 ? "El ataque fue super efectivo" : E == 0.5 ? "El ataque tuvo un efecto debil" : hitsToGive != 1 ? "Golpeó " + hitsToGive + " Veces!" : null
-                    setEffectEntrie(effectEntrie)
-                    res();
-                  },500)
-      })
- 
-      await new Promise((res, rej) => {
-          setTimeout(async ()=>{
-          console.log("third step done") 
-          player == "One" ? console.log(enemyPokeballs) : null          
-            if(/*localTargetHP < 0 ||*/ localTargetHP == 0) {
-              await pokemonDefeated(player, target);
-              res(resolve({name: "Enemigo derrotado"}))
-            } else { setMoveRunning(false); res(resolve({name: "Enemigo vivo"})) }
-          },500)
-      })
-
-      //await firstPromise.then(() => console.log("first step done"));
-      /*await secondPromise;
-      await thirdPromise;*/
-          
-    }
-    
-    processAttack() 
-  } else if(type == "PokemonChange"){
-        setEffectEntrie(attacker.name.toUpperCase() + " se retira del combate.")
-        setMoveRunning(true)
-        setTimeout(()=>{
-            setPokemonOne(attackerPokeballs[index])// PARA ONLINE ---> emitSetPokemon({index, player})
-            handlePlaySound(attackerPokeballs[index].cries.latest)
-            setTimeout(()=>{
-                setEffectEntrie(attackerPokeballs[index].name.toUpperCase() + " se une a la batalla!")
-                setTimeout(()=>{
-                    resolve({name: "Pokemon changed", player, changedPokemonTo: index});
-                    setMoveRunning(false)
-                },1000)   
-            },1000)   
-        },1000)       
-    } else if(type == "Item"){
-          if(index == 23) {
-              setEffectEntrie("El jugador ha usado una poción!")
-              setMoveRunning(true)
-              setTimeout(()=>{
-                  setAttackerPokeballs(prevAP=>{
-                  const newAttackerPokeballs = [...prevAP];
-                  newAttackerPokeballs[attackerIndexInPokeballs].hp_state = prevAP[attackerIndexInPokeballs].stats[0].actual_stat
-                  return newAttackerPokeballs
-                  })
-                  setAttackerPokemon(prevPokemon => ({ ...prevPokemon, hp_state: prevPokemon.stats[0].actual_stat }));
-                  setTimeout(()=>{
-                      resolve("Enemigo vivo")
-                      setMoveRunning(false)
-                  },1000) 
-              },1000)
-              
+        let updatedPokemonData = null;
+        if (winner === 'One') {
+          try {
+            const res = await apiFetch('pokemons/users/updatelevel', {
+              method: 'POST',
+              body: JSON.stringify({
+                userId: getAuthToken(),
+                pokeballsState,
+                pokemonExp: Exp,
+              }),
+            });
+            const data = await res.json();
+            updatedPokemonData = data;
+          } catch {
+            // TODO: check original logic for updatelevel failure handling
           }
-          if(index == 12){
-              setEffectEntrie("El jugado ha lanzado una pokeball!")
-              setMoveRunning(true)
-              setTimeout(()=>{
-                  setEffectEntrie(pokemonTwo.name.toUpperCase() + " ha sido capturado!")
-                  setTimeout(()=>{
-                    fetch(`${API_URL}pokemons/users/addpokemon`,{
-                    method:'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({
-                    "userID" : token,
-                    "pokemonID" : pokemonTwo.id,
-                    "pokemonName" : window.prompt("Choose the name to your pokemon", pokemonTwo.name.toUpperCase()) || pokemonTwo.name
-                    }),
-                    }).then(response =>response.json()).then(data => console.log(data))
-                    setTimeout(()=>{
-                        setEffectEntrie(attacker.name.toUpperCase() + " ha ganado!")
-                        setGameState(`One wins`)
-                    },2000)
-                  },1500)
-              },3000)
-          }
-    }
-})
-}
-
-
-
- const setRandomPokemon = async ({level})=>{
-  const pokeballsTwo = []
-  
-  for(let i = 0; i < 3; i++){
-        const pokemonIndex = Math.floor(Math.random() * 1000 )
-        const pokeapi = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonIndex}`).then(response=>response.json()).then(async data=>{
-        const inputPokemon = data//renderData[pokemonIndex]
-
-        const baseExp = inputPokemon.base_experience
-        const pokemonLevel = level //Math.floor(Math.random() * 5 + 1)
-        const ownMoves =  inputPokemon.moves.filter(move => move.version_group_details[0].level_learned_at < pokemonLevel && move.version_group_details[0].move_learn_method.name == "level-up")
-        const randomMoves = []
-        for(let i = 0; i < 4; i++){
-          let randomIndex = Math.floor(Math.random() * ownMoves.length)
-          randomMoves.push(ownMoves.splice(randomIndex, 1)[0]);
-          if(ownMoves.length == 0){break;}
         }
-        const apiMoves = []
-        for(let i = 0; i < randomMoves.length; i++){
-          const moveUrl = randomMoves[i].move.url
-          var apiMove =  await fetch(moveUrl).then(response=>response.json()) 
-          apiMove = {
-            ...apiMove,
-            pp_state : apiMove.pp ?? 15
+
+        const updatedPokemon = updatedPokemonData?.updatedPokemon;
+        const movesToLearnList = updatedPokemonData?.movesToLearn;
+
+        if (winner === 'One' && updatedPokemon) {
+          setRenderImageOne(updatedPokemon);
+          setPokemonOne(updatedPokemon[attackerIndexInPokeballs]);
+        }
+
+        if (movesToLearnList && movesToLearnList.length) {
+          await movesToLearnList.reduce(async (promiseChain, { name, index, moveToLearn: nextMove }) => {
+            await promiseChain;
+            const pokemonIndexInPokeballs = renderImageOne.findIndex((p) => p.index === index);
+            const moveLearnedIndex = await new Promise((res) => {
+              setMoveToLearn({ moveToLearn: nextMove, resolve: res, pokemonIndexInPokeballs });
+            });
+            setRenderImageOne((prevAP) => {
+              const newPokeballs = [...prevAP];
+              if (newPokeballs[pokemonIndexInPokeballs]?.moves) {
+                newPokeballs[pokemonIndexInPokeballs].moves[moveLearnedIndex] = nextMove;
+              }
+              return newPokeballs;
+            });
+            if (moveLearnedIndex === 0) {
+              setPokemonOne((prevP) => ({
+                ...prevP,
+                moves: prevP.moves.map((m, idx) => (idx === 0 ? nextMove : m)),
+              }));
             }
-          apiMoves.push(apiMove)
-          if(i == randomMoves.length -1){
+            return moveLearnedIndex;
+          }, Promise.resolve()).then(() => setMoveToLearn(null));
+        }
 
-          const IVs = {
-          hp : Math.floor(Math.random() * 32 ) + 1,
-          attack : Math.floor(Math.random() * 32 ) + 1,
-          defense : Math.floor(Math.random() * 32 ) + 1,
-          special_attack : Math.floor(Math.random() * 32 ) + 1,
-          special_defense : Math.floor(Math.random() * 32 ) + 1,
-          speed : Math.floor(Math.random() * 32 ) + 1
+        const updatedAttacker = updatedPokemon?.find((p) => p.index === attacker.index);
+        if (winner === 'One') {
+          await new Promise((r) =>
+            setTimeout(() => {
+              setEffectEntrie(`${attacker.name.toUpperCase()} won ${Math.floor(Exp)} EXP!`);
+              r();
+            }, 1000)
+          );
         }
-        const EVs = {
-          hp : inputPokemon.stats[0].effort,
-          attack : inputPokemon.stats[1].effort,
-          defense : inputPokemon.stats[2].effort,
-          special_attack : inputPokemon.stats[3].effort,
-          special_defense : inputPokemon.stats[4].effort,
-          speed : inputPokemon.stats[5].effort
+
+        if (winner === 'One' && updatedAttacker && updatedAttacker.level !== NvU) {
+          await new Promise((r) =>
+            setTimeout(() => {
+              setEffectEntrie(`${attacker.name.toUpperCase()} leveled up!`);
+              setObtainedStats([...updatedAttacker.stats, { actual_stat: updatedAttacker.level }]);
+              r();
+            }, 1000)
+          );
         }
-        const hp = Math.floor( ((2 * inputPokemon.stats[0].base_stat  + IVs.hp + EVs.hp / 4) * pokemonLevel) / 100 + pokemonLevel + 10 );
-        const attack = Math.floor( ((2 * inputPokemon.stats[1].base_stat  + IVs.attack + EVs.attack / 4) * pokemonLevel) / 100 +  5 );
-        const defense = Math.floor( ((2 * inputPokemon.stats[2].base_stat  + IVs.defense + EVs.defense / 4) * pokemonLevel) / 100 + 5 );
-        const special_attack = Math.floor( ((2 * inputPokemon.stats[3].base_stat  + IVs.special_attack + EVs.special_attack / 4) * pokemonLevel) / 100 + 5 );
-        const special_defense = Math.floor( ((2 * inputPokemon.stats[4].base_stat  + IVs.special_defense + EVs.special_defense / 4) * pokemonLevel) / 100 + 5 );
-        const speed = Math.floor( ((2 * inputPokemon.stats[5].base_stat  + IVs.speed + EVs.speed / 4) * pokemonLevel) / 100 + 5 );
-            const finalPokemon = {
-          ...inputPokemon,
-          index : pokeballsTwo.length,
-          level : pokemonLevel,
-          hp_state : hp,
-          moves : apiMoves,
-          stats : [
-            {...inputPokemon.stats[0], actual_stat : hp},
-            {...inputPokemon.stats[1], actual_stat : attack},
-            {...inputPokemon.stats[2], actual_stat : defense},
-            {...inputPokemon.stats[3], actual_stat : special_attack},
-            {...inputPokemon.stats[4], actual_stat : special_defense},
-            {...inputPokemon.stats[5], actual_stat : speed}
-            ]
+
+        if (availableEnemyPokeballs !== -1) {
+          setTimeout(() => {
+            if (winner === 'One') {
+              setEnemyPokemon(enemyPokeballs[availableEnemyPokeballs]);
+            }
+            setObtainedStats(null);
+            setMoveRunning(false);
+            resolver('Pokemon derrotado');
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            setEffectEntrie(`${attacker.name.toUpperCase()} WINS`);
+            setGameState(`${winner} wins`);
+            localStorage.setItem('pokeball0', null);
+            localStorage.setItem('pokeball1', null);
+            localStorage.setItem('pokeball2', null);
+            resolver('Pokemon derrotado');
+          }, 1500);
+        }
+      });
+    },
+    [pokemonOne, pokemonTwo, renderImageOne, renderImageTwo]
+  );
+
+  const handleAttack = useCallback(
+    async ({ move, index, updatedIndex, player, type }) => {
+      setMoveRunning(true);
+      setEffectEntrie('Loading move...');
+
+      const attackDuration = 1;
+
+      return new Promise((resolve) => {
+        const isPlayerOne = player === 'One';
+        const attacker = isPlayerOne ? pokemonOne : pokemonTwo;
+        const enemyPokeballs = isPlayerOne ? renderImageTwo : renderImageOne;
+        const attackerPokeballs = isPlayerOne ? renderImageOne : renderImageTwo;
+        const setEnemyPokeballs = isPlayerOne ? setRenderImageTwo : setRenderImageOne;
+        const setAttackerPokeballs = isPlayerOne ? setRenderImageOne : setRenderImageTwo;
+        const setTargetPokemon = isPlayerOne ? setPokemonTwo : setPokemonOne;
+        const setAnim = isPlayerOne ? setAnimationTwo : setAnimationOne;
+
+        const updatedEnemyIndexInPokeballs = updatedIndex ? updatedIndex.changedPokemonTo : null;
+        const updatedEnemy = updatedEnemyIndexInPokeballs != null ? enemyPokeballs[updatedEnemyIndexInPokeballs] : null;
+        const target = updatedEnemy || (isPlayerOne ? pokemonTwo : pokemonOne);
+        const enemyIndexInPokeballs =
+          updatedEnemyIndexInPokeballs != null
+            ? updatedEnemyIndexInPokeballs
+            : enemyPokeballs.findIndex((p) => p.index === target.index);
+        const attackerIndexInPokeballs = attackerPokeballs.findIndex((p) => p.index === attacker.index);
+
+        if (type === 'Attack') {
+          let hitsGiven = 0;
+          const hitsToGive =
+            move.meta?.max_hits != null
+              ? Math.floor(Math.random() * (move.meta.max_hits - move.meta.min_hits + 1)) + move.meta.min_hits
+              : 1;
+          let localTargetHP = target.hp_state;
+          const hitsToGiveArray = new Array(hitsToGive).fill(0);
+
+          setMoveRunning(true);
+          setEffectEntrie(`${attacker.name.toUpperCase()} used ${move.name.toUpperCase()}!`);
+
+          const processAttack = async () => {
+            await hitsToGiveArray.reduce(async (promiseChain) => {
+              await promiseChain;
+              return new Promise((res) => {
+                const isFailed = Math.floor(Math.random() * 100 + 1) >= move.accuracy && move.accuracy != null;
+                const damageClass = move.damage_class?.name;
+                const V = Math.floor(Math.random() * 16) + 85;
+                const N = attacker.level;
+                const A =
+                  damageClass === 'physical'
+                    ? attacker.stats[1].actual_stat
+                    : attacker.stats[3]?.actual_stat ?? attacker.stats[1].actual_stat;
+                const D =
+                  damageClass === 'physical'
+                    ? target.stats[2].actual_stat
+                    : target.stats[4]?.actual_stat ?? target.stats[2].actual_stat;
+                const B = getBonus(move.type, attacker?.types);
+                const E = getEffectiveness(move.type, target?.types, types);
+                const P = move.power || 0;
+                let finalDamage = Math.floor(0.01 * B * E * V * (((0.2 * N + 1) * A * P) / (25 * D) + 2));
+
+                setTimeout(async () => {
+                  if (!isFailed) {
+                    localTargetHP = Math.max(0, localTargetHP - finalDamage);
+                    setDamageDoneOne(finalDamage);
+                  } else {
+                    finalDamage = 0;
+                    setDamageDoneOne('Miss!');
+                    setEffectEntrie('Ha fallado!');
+                  }
+                  setAnim(true);
+                  hitsGiven += 1;
+
+                  setTargetPokemon((prev) => (prev ? { ...prev, hp_state: localTargetHP } : prev));
+                  setEnemyPokeballs((prevEP) =>
+                    prevEP.map((pokeball, idx) =>
+                      idx === enemyIndexInPokeballs ? { ...pokeball, hp_state: localTargetHP } : pokeball
+                    )
+                  );
+                  setAttackerPokeballs((prevAP) => {
+                    const newAttackerPokeballs = [...prevAP];
+                    const updatedPokeball = { ...newAttackerPokeballs[attackerIndexInPokeballs] };
+                    if (updatedPokeball.moves) {
+                      const updatedMoves = [...updatedPokeball.moves];
+                      if (updatedMoves[index]) {
+                        updatedMoves[index] = {
+                          ...updatedMoves[index],
+                          pp_state: updatedMoves[index].pp_state - 1,
+                        };
+                      }
+                      updatedPokeball.moves = updatedMoves;
+                    }
+                    newAttackerPokeballs[attackerIndexInPokeballs] = updatedPokeball;
+                    return newAttackerPokeballs;
+                  });
+
+                  res();
+                }, (attackDuration * 1000) / 2);
+              });
+            }, Promise.resolve());
+
+            setTimeout(() => {
+              setAnim(false);
+              const E = getEffectiveness(move.type, target?.types, types);
+              const effectText =
+                E === 2
+                  ? 'El ataque fue super efectivo'
+                  : E === 0.5
+                    ? 'El ataque tuvo un efecto debil'
+                    : hitsToGive !== 1
+                      ? `Golpeó ${hitsToGive} Veces!`
+                      : null;
+              if (effectText) setEffectEntrie(effectText);
+
+              setTimeout(async () => {
+                if (localTargetHP <= 0) {
+                  await pokemonDefeated(player, target);
+                  resolve({ name: 'Enemigo derrotado' });
+                } else {
+                  setMoveRunning(false);
+                  resolve({ name: 'Enemigo vivo' });
+                }
+              }, 500);
+            }, 500);
+          };
+
+          processAttack();
+        } else if (type === 'PokemonChange') {
+          setEffectEntrie(`${attacker.name.toUpperCase()} se retira del combate.`);
+          setMoveRunning(true);
+          setTimeout(() => {
+            setPokemonOne(attackerPokeballs[index]);
+            setTimeout(() => {
+              setEffectEntrie(`${attackerPokeballs[index]?.name?.toUpperCase()} se une a la batalla!`);
+              setTimeout(() => {
+                resolve({ name: 'Pokemon changed', player, changedPokemonTo: index });
+                setMoveRunning(false);
+              }, 1000);
+            }, 1000);
+          }, 1000);
+        } else if (type === 'Item') {
+          if (index === 23) {
+            setEffectEntrie('El jugador ha usado una poción!');
+            setMoveRunning(true);
+            setTimeout(() => {
+              setAttackerPokeballs((prevAP) => {
+                const next = [...prevAP];
+                if (next[attackerIndexInPokeballs]) {
+                  next[attackerIndexInPokeballs].hp_state = next[attackerIndexInPokeballs].stats[0].actual_stat;
+                }
+                return next;
+              });
+              setPokemonOne((prev) => ({ ...prev, hp_state: prev.stats[0].actual_stat }));
+              setTimeout(() => {
+                resolve({ name: 'Enemigo vivo' });
+                setMoveRunning(false);
+              }, 1000);
+            }, 1000);
+          } else if (index === 12) {
+            setEffectEntrie('El jugador ha lanzado una pokeball!');
+            setMoveRunning(true);
+            setTimeout(() => {
+              setEffectEntrie(`${pokemonTwo.name.toUpperCase()} ha sido capturado!`);
+              setPendingCapture({
+                pokemonId: pokemonTwo.id,
+                defaultName: pokemonTwo.name.toUpperCase(),
+                resolve,
+              });
+            }, 3000);
           }
-
-        pokeballsTwo.length <= 3 && pokeballsTwo.push(finalPokemon)
-        
-         /* setRenderImageTwo([finalPokemon])
-          setPlayerTwoMove({move: finalPokemon.moves[0], index: 0, player: "Two", type: "Attack"})
-          setPokemonTwo(finalPokemon)*/
         }
-        }    
-      }); 
+      });
+    },
+    [pokemonOne, pokemonTwo, renderImageOne, renderImageTwo, types, pokemonDefeated]
+  );
+
+  const setRandomPokemon = useCallback(async ({ level }) => {
+    const pokeballsTwo = [];
+    for (let i = 0; i < 3; i++) {
+      const pokemonIndex = Math.floor(Math.random() * 1000) + 1;
+      try {
+        const pokeapiRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonIndex}`);
+        const inputPokemon = await pokeapiRes.json();
+        const pokemonLevel = level || 5;
+
+        const ownMoves = inputPokemon.moves.filter(
+          (m) =>
+            m.version_group_details[0]?.level_learned_at < pokemonLevel &&
+            m.version_group_details[0]?.move_learn_method?.name === 'level-up'
+        );
+        const randomMoves = [];
+        for (let j = 0; j < 4; j++) {
+          if (ownMoves.length === 0) break;
+          const randomIndex = Math.floor(Math.random() * ownMoves.length);
+          randomMoves.push(ownMoves.splice(randomIndex, 1)[0]);
+        }
+
+        const apiMoves = [];
+        for (let j = 0; j < randomMoves.length; j++) {
+          const moveRes = await fetch(randomMoves[j].move.url);
+          const apiMove = await moveRes.json();
+          apiMoves.push({ ...apiMove, pp_state: apiMove.pp ?? 15 });
+        }
+
+        const IVs = generateRandomIvs();
+        const EVs = {
+          hp: inputPokemon.stats[0].effort,
+          attack: inputPokemon.stats[1].effort,
+          defense: inputPokemon.stats[2].effort,
+          special_attack: inputPokemon.stats[3].effort,
+          special_defense: inputPokemon.stats[4].effort,
+          speed: inputPokemon.stats[5].effort,
+        };
+
+        const hp = calculatePokemonHp(inputPokemon.stats[0].base_stat, IVs.hp, EVs.hp, pokemonLevel);
+        const attack = calculatePokemonStat(inputPokemon.stats[1].base_stat, IVs.attack, EVs.attack, pokemonLevel);
+        const defense = calculatePokemonStat(inputPokemon.stats[2].base_stat, IVs.defense, EVs.defense, pokemonLevel);
+        const special_attack = calculatePokemonStat(inputPokemon.stats[3].base_stat, IVs.special_attack, EVs.special_attack, pokemonLevel);
+        const special_defense = calculatePokemonStat(inputPokemon.stats[4].base_stat, IVs.special_defense, EVs.special_defense, pokemonLevel);
+        const speed = calculatePokemonStat(inputPokemon.stats[5].base_stat, IVs.speed, EVs.speed, pokemonLevel);
+
+        const finalPokemon = {
+          ...inputPokemon,
+          index: pokeballsTwo.length,
+          level: pokemonLevel,
+          hp_state: hp,
+          moves: apiMoves,
+          stats: [
+            { ...inputPokemon.stats[0], actual_stat: hp },
+            { ...inputPokemon.stats[1], actual_stat: attack },
+            { ...inputPokemon.stats[2], actual_stat: defense },
+            { ...inputPokemon.stats[3], actual_stat: special_attack },
+            { ...inputPokemon.stats[4], actual_stat: special_defense },
+            { ...inputPokemon.stats[5], actual_stat: speed },
+          ],
+        };
+
+        if (pokeballsTwo.length < 3) pokeballsTwo.push(finalPokemon);
+      } catch {
+        // TODO: check original logic on PokeAPI fetch failure
       }
-    return new Promise(resolve=>{
-    if(pokeballsTwo.length == 3){
-          setPokemonTwo(pokeballsTwo[0])
-          setPlayerTwoMove({move: pokeballsTwo[0].moves[0], index : 0, player : "Two", type: "Attack"})
-          setRenderImageTwo(pokeballsTwo); 
-          resolve()
-        }
-  })
-} 
-
-
-useEffect(()=>{
-    const getRandomPokemon = async ()=>{
-      await setRandomPokemon({ level: userPokemon[p0].level })
     }
-    getRandomPokemon();
-    setRenderImageOne([userPokemon[p0], userPokemon[p1], userPokemon[p2]]);
-    setPokemonOne(userPokemon[p0])
-    
-    fetch(`${API_URL}pokemons/data/types`).then(response=>response.json()).then(data=>setTypes(data.types))
-  },[])
 
+    if (pokeballsTwo.length > 0) {
+      setPokemonTwo(pokeballsTwo[0]);
+      if (pokeballsTwo[0].moves?.length) {
+        setPlayerTwoMove({ move: pokeballsTwo[0].moves[0], index: 0, player: 'Two', type: 'Attack' });
+      }
+      setRenderImageTwo(pokeballsTwo);
+    }
+  }, []);
 
-	return <>
-	<section className="battlefield-section">
-    {pokemonTwo ? <Suspense fallback={<div>Loading...</div>}><BattleWindow player={"One"} pokemonOne={pokemonOne} pokemonTwo={pokemonTwo} renderImage={renderImageOne} enemyPokeballs={renderImageTwo} setPokemon={setPokemonOne} setPlayerMove={setPlayerOneMove} rounded1={rounded1} rounded2={rounded2} effectEntrie={effectEntrie} moveRunning={moveRunning} gameState={gameState} animationOne={animationOne} animationTwo={animationTwo} setActualSection={setActualSection} damageDoneOne={damageDoneOne} battleMusic={battleMusic} obtainedStats={obtainedStats} /*setObtainedStats={setObtainedStats}*/ mode="Explore" setGameState={setGameState} moveToLearn={moveToLearn}></BattleWindow></Suspense> : <div style={window.innerWidth > 700 ? {scale: "0.5"} : {scale: "0.3"}} ><BlinkBlur color="var(--gold-one)" size="small" text="" textColor="" /></div>} 
-  </section>
-  </>
-})
+  useEffect(() => {
+    if (userPokemon && userPokemon[p0]) {
+      setRandomPokemon({ level: userPokemon[p0].level });
+      setRenderImageOne([userPokemon[p0], userPokemon[p1], userPokemon[p2]].filter(Boolean));
+      setPokemonOne(userPokemon[p0]);
+    }
+    apiFetch('pokemons/data/types')
+      .then((res) => res.json())
+      .then((data) => setTypes(data.types || []))
+      .catch(() => { });
+  }, [p0, p1, p2, userPokemon, setRandomPokemon]);
+
+  const handleCaptureConfirm = async (pokemonName) => {
+    if (!pendingCapture) return;
+    try {
+      await apiFetch('pokemons/users/addpokemon', {
+        method: 'POST',
+        body: JSON.stringify({
+          userID: getAuthToken(),
+          pokemonID: pendingCapture.pokemonId,
+          pokemonName: pokemonName || pendingCapture.defaultName,
+        }),
+      });
+      setEffectEntrie(`${pokemonOne.name.toUpperCase()} has won!`);
+      setGameState('One wins');
+    } catch {
+      // TODO: check original logic for capture failure
+    } finally {
+      if (pendingCapture.resolve) pendingCapture.resolve({ name: 'Pokemon captured' });
+      setPendingCapture(null);
+    }
+  };
+
+  return (
+    <>
+      {pendingCapture && (
+        <NamePokemonModal
+          isOpen={true}
+          defaultName={pendingCapture.defaultName}
+          onConfirm={handleCaptureConfirm}
+        />
+      )}
+      <section className="battlefield-section">
+        {pokemonTwo ? (
+          <BattleWindow
+            player="One"
+            pokemonOne={pokemonOne}
+            pokemonTwo={pokemonTwo}
+            ownPokeballs={renderImageOne}
+            enemyPokeballs={renderImageTwo}
+            setPokemon={setPokemonOne}
+            setPlayerMove={setPlayerOneMove}
+            rounded1={rounded1}
+            rounded2={rounded2}
+            effectEntrie={effectEntrie}
+            moveRunning={moveRunning}
+            gameState={gameState}
+            animationOne={animationOne}
+            animationTwo={animationTwo}
+            setActualSection={setActualSection}
+            damageDoneOne={damageDoneOne}
+            battleMusic={audioRef.current}
+            obtainedStats={obtainedStats}
+            mode="Explore"
+            setGameState={setGameState}
+            moveToLearn={moveToLearn}
+          />
+        ) : (
+          <div style={window.innerWidth > 700 ? { scale: '0.5' } : { scale: '0.3' }}>
+            <BlinkBlur color="var(--gold-one)" size="small" text="" textColor="" />
+          </div>
+        )}
+      </section>
+    </>
+  );
+});
