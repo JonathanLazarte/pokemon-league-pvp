@@ -78,7 +78,7 @@ export default memo(function ModeSelection({ socket, setActualSection, connected
 
 			<header className="mode-selection-header">
 				<div style={buttonPvpStyle} className="subheader-item" onClick={() => { handleSound('menu-click'); setModeSelected("Pvp"); setMapSelected("arena"); setQueueSelected("CLASIFICATORIA SOLO") }}>PVP</div>
-				<div style={buttonExploreStyle} className="subheader-item" onClick={() => { handleSound('menu-click'); setModeSelected("Explore"); setMapSelected("explorar"); setQueueSelected("INTERMEDIO") }}>EXPLORAR</div>
+				<div style={buttonExploreStyle} className="subheader-item" onClick={() => { handleSound('menu-click'); setModeSelected("Explore"); setMapSelected("explorar"); setQueueSelected("INTERMEDIO") }}>PLAYER VS IA</div>
 			</header>
 			{modeSelected == "Pvp" && <GameMode {...pvpModeProps}></GameMode>}
 			{modeSelected == "Explore" && <GameMode {...exploreModeProps}></GameMode>}
